@@ -1,0 +1,217 @@
+openapi: "3.0.0"
+info:
+  description: ""
+  version: "1.0.0"
+  title: ""
+  termsOfService: ""
+  contact:
+    email: "info@medical-supplies.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+- name: "medical-supplies"
+  description: "manage medical supplies distribution"
+- name: "accounts"
+  description: "manage user accounts"
+- name: "authentication"
+  description: "Access control"
+paths:
+  /user/signup:
+    post:
+      tags:
+      - "user"
+      summary: "Register a new user"
+      description: ""
+      operationId: "userSignUp"
+      security: 
+        - bearerJWT: []
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignUpRequestDTO'
+      responses:
+        "405":
+          description: "Invalid input"
+        '201':
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSignUpResponseDTO'
+  /user/signin:
+    post:
+      tags:
+      - "user"
+      summary: "Authorize an user"
+      description: ""
+      operationId: "userSignIn"
+      security: 
+        - bearerJWT: []
+      requestBody:
+        description: this pretends to be an alias for OAuth grant_type:client_credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignInRequestDTO'
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSignInResponseDTO'
+  /user/refresh:
+    post:
+      tags:
+      - "user"
+      summary: "refresh authorization token"
+      description: ""
+      operationId: "proxyPipe"
+      security: 
+        - bearerJWT: []
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProxyPipeRequestDTO'
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProxyPipeResponseDTO'
+  /proxy/pipe:
+    post:
+      tags:
+      - "proxy"
+      summary: "proxy http service"
+      description: ""
+      operationId: "userRefresh"
+      security: 
+        - bearerJWT: []
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRefreshRequestDTO'
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRefreshResponseDTO'
+components: 
+  securitySchemes:
+    bearerJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+        
+  schemas:
+    UserSignUpRequestDTO:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      xml:
+        name: "User"
+    UserSignUpResponseDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+      xml:
+        name: "User"
+    UserSignInRequestDTO:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      xml:
+        name: "User"
+    UserSignInResponseDTO:
+      type: "object"
+      properties:
+        access_token:
+          type: "string"
+        token_type:
+          type: "string"
+        expires_in:
+          type: "integer"
+          format: "int64"
+        refresh_token:
+          type: "string"
+      xml:
+        name: "User"
+    UserRefreshRequestDTO:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      xml:
+        name: "User"
+    UserRefreshResponseDTO:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+      xml:
+        name: "User"
+    ProxyPipeRequestDTO:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        items:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              foo: 
+                type: "string"
+              bar: 
+                type: "string"
+      xml:
+        name: "Pipe"
+    ProxyPipeResponseDTO:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        items:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              foo: 
+                type: "string"
+              bar: 
+                type: "string"
+      xml:
+        name: "Pipe"
+  
+  
