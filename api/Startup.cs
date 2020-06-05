@@ -36,6 +36,12 @@ namespace ArqNetCore
                 DB_URL = "localhost";
             }
             string server = DB_URL;
+            string DB_PORT = Environment.GetEnvironmentVariable("DB_PORT");
+            if(DB_PORT == null || string.IsNullOrWhiteSpace(DB_PORT))
+            {
+                DB_PORT = "3306";
+            }
+            string port = DB_PORT;
             string DB_NAME = Environment.GetEnvironmentVariable("DB_NAME");
             if(DB_NAME == null || string.IsNullOrWhiteSpace(DB_NAME))
             {
@@ -59,7 +65,7 @@ namespace ArqNetCore
                 (DbContextOptionsBuilder options) => 
                 {
                     options.UseMySQL(
-                        $"server={server};database={database};user={user};password={password}", 
+                        $"server={server};port={port};database={database};user={user};password={password}", 
                         (MySQLDbContextOptionsBuilder builder) => 
                         {
                             builder.ExecutionStrategy(context => {
