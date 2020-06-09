@@ -55,7 +55,9 @@ namespace ArqNetCore.Controllers
             _logger.LogInformation("UserSignIn email:" + userSignInRequestDTO.Email);
             UserSignInDTO userSignInDTO = _mapper.Map<UserSignInDTO>(userSignInRequestDTO);
             UserSignInResultDTO userSignInResultDTO = _userService.UserSignIn(userSignInDTO);
-            return _mapper.Map<UserSignInResponseDTO>(userSignInResultDTO);
+            return new UserSignInResponseDTO{
+                Access_token = userSignInResultDTO.Token
+            };
         }
     }
 }

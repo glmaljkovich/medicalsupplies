@@ -1,18 +1,22 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.FileProviders;
 using AutoMapper;
 using MySql.Data.EntityFrameworkCore.Infrastructure;
 using ArqNetCore.Configuration;
 using ArqNetCore.Services;
+using NSwag.AspNetCore;
 
 namespace ArqNetCore
 {
@@ -121,6 +125,7 @@ namespace ArqNetCore
                 };
             });
 
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -135,9 +140,21 @@ namespace ArqNetCore
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseSwaggerUi3((SwaggerUi3Settings settings) =>
+            {
+                //settings.DocumentPath = "/api.yaml";
+                settings.SwaggerRoutes.Add(new SwaggerUi3Route("v1", "/open-api/api.yaml"));
+                //settings.SwaggerUiRoute = "/swagger";
+            });
+
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"api.yaml")),
+            //    RequestPath = new PathString("/api.yaml")
+            //});
 
             app.UseEndpoints(endpoints =>
             {

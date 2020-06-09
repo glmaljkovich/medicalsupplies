@@ -8,12 +8,8 @@ namespace ArqNetCore.Entities
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
-        
         [ForeignKey("Id")]
-        public Supply Supply;
-
-        [ForeignKey("Email")]
-        public User User;
+        public Account Account;
         [ForeignKey("Id")]
         public Area Area;
 

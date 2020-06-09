@@ -13,7 +13,6 @@ namespace ArqNetCore.Mappers
             CreateMap<UserSignUpRequestDTO, UserSignUpDTO>();
             CreateMap<UserSignUpResultDTO, UserSignUpResponseDTO>();
             CreateMap<UserSignInRequestDTO, UserSignInDTO>();
-            CreateMap<UserSignInResultDTO, UserSignInResponseDTO>();
             //Account
             CreateMap<Account, AccountFindResultDTO>();
         }

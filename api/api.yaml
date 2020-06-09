@@ -10,10 +10,10 @@ info:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags:
-- name: "medical-supplies"
+- name: "supplies"
   description: "manage medical supplies distribution"
-- name: "accounts"
-  description: "manage user accounts"
+- name: "user"
+  description: "manage user information"
 - name: "authentication"
   description: "Access control"
 paths:
@@ -21,11 +21,10 @@ paths:
     post:
       tags:
       - "user"
+      - "authentication"
       summary: "Register a new user"
       description: ""
       operationId: "userSignUp"
-      security: 
-        - bearerJWT: []
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -46,11 +45,10 @@ paths:
     post:
       tags:
       - "user"
+      - "authentication"
       summary: "Authorize an user"
       description: ""
       operationId: "userSignIn"
-      security: 
-        - bearerJWT: []
       requestBody:
         description: this pretends to be an alias for OAuth grant_type:client_credentials
         required: true
@@ -71,36 +69,10 @@ paths:
     post:
       tags:
       - "user"
+      - "authentication"
       summary: "refresh authorization token"
       description: ""
-      operationId: "proxyPipe"
-      security: 
-        - bearerJWT: []
-      requestBody:
-        description: Optional description in *Markdown*
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProxyPipeRequestDTO'
-      responses:
-        "405":
-          description: "Invalid input"
-        '200':
-          description: "Success"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProxyPipeResponseDTO'
-  /proxy/pipe:
-    post:
-      tags:
-      - "proxy"
-      summary: "proxy http service"
-      description: ""
       operationId: "userRefresh"
-      security: 
-        - bearerJWT: []
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -117,17 +89,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserRefreshResponseDTO'
+  /supply:
+    post:
+      tags:
+      - "supplies"
+      summary: "create supplies order"
+      description: ""
+      operationId: "supplyCreate"
+      security: 
+        - bearerJWT: []
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuppliesOrderCreateRequestDTO'
+      responses:
+        "405":
+          description: "Invalid input"
+        '201':
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppliesOrderCreateResponseDTO'
 components: 
   securitySchemes:
     bearerJWT:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      in: header
         
   schemas:
     UserSignUpRequestDTO:
       type: "object"
+      required: 
+        - email
+        - password
       properties:
+        name:
+          type: "string"
+        phone:
+          type: "string"
+        company:
+          type: "string"
+        position:
+          type: "string"
+        locality:
+          type: "string"
         email:
           type: "string"
         password:
@@ -141,16 +152,19 @@ components:
           type: "integer"
           format: "int64"
       xml:
-        name: "User"
+        name: "user"
     UserSignInRequestDTO:
       type: "object"
+      required: 
+        - email
+        - password
       properties:
         email:
           type: "string"
         password:
           type: "string"
       xml:
-        name: "User"
+        name: "user"
     UserSignInResponseDTO:
       type: "object"
       properties:
@@ -164,7 +178,7 @@ components:
         refresh_token:
           type: "string"
       xml:
-        name: "User"
+        name: "user"
     UserRefreshRequestDTO:
       type: "object"
       properties:
@@ -173,45 +187,34 @@ components:
         password:
           type: "string"
       xml:
-        name: "User"
+        name: "user"
     UserRefreshResponseDTO:
       type: "object"
       properties:
         token:
           type: "string"
       xml:
-        name: "User"
-    ProxyPipeRequestDTO:
+        name: "user"
+    SuppliesOrderCreateRequestDTO:
+      type: "object"
+      required: 
+        - supply_type
+        - area_id
+      properties:
+        supply_type:
+          type: "string"
+        supply_description:
+          type: "string"
+        area_id:
+          type: "string"
+      xml:
+        name: "Supply"
+    SuppliesOrderCreateResponseDTO:
       type: "object"
       properties:
         id:
           type: "string"
-        items:
-          type: "array"
-          items:
-            type: "object"
-            properties:
-              foo: 
-                type: "string"
-              bar: 
-                type: "string"
       xml:
-        name: "Pipe"
-    ProxyPipeResponseDTO:
-      type: "object"
-      properties:
-        id:
-          type: "string"
-        items:
-          type: "array"
-          items:
-            type: "object"
-            properties:
-              foo: 
-                type: "string"
-              bar: 
-                type: "string"
-      xml:
-        name: "Pipe"
+        name: "Supply"
   
   

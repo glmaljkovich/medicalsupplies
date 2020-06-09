@@ -1,14 +1,15 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ArqNetCore.Entities
 
 {
     public class Supply {
-        [Key]
+        [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
-        public string Name {get; set;}
+        public string SupplyType {get; set;}
         public string Description {get; set;}
-
-        public bool Proper;
+        [ForeignKey("Id")]
+        public SuppliesOrder SuppliesOrder;
     }
 }
