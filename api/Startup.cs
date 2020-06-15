@@ -55,7 +55,7 @@ namespace ArqNetCore
             string DB_USERNAME = Environment.GetEnvironmentVariable("DB_USERNAME");
             if(DB_USERNAME == null)
             {
-                DB_USERNAME = "";
+                throw new Exception("DB_USERNAME required");
             }
             string user = DB_USERNAME;
             string DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
