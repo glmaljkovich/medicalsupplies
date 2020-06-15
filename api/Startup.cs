@@ -32,7 +32,16 @@ namespace ArqNetCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
             services.AddAutoMapper(typeof(Startup));
             string DB_URL = Environment.GetEnvironmentVariable("DB_URL");
             if(DB_URL == null || string.IsNullOrWhiteSpace(DB_URL))
@@ -141,6 +150,8 @@ namespace ArqNetCore
             app.UseRouting();
 
             app.UseAuthentication();
+            // This one needs to be called before Authorization happens
+            app.UseCors();
             app.UseAuthorization();
             app.UseOpenApi();
             app.UseSwaggerUi3((SwaggerUi3Settings settings) =>
