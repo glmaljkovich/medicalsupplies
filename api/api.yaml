@@ -89,7 +89,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserRefreshResponseDTO'
-  /supply:
+  /supplies-order:
     post:
       tags:
       - "supplies"
@@ -114,6 +114,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuppliesOrderCreateResponseDTO'
+    get:
+      tags:
+      - "supplies"
+      summary: "list supplies orders"
+      description: ""
+      operationId: "supplyList"
+      security: 
+        - bearerJWT: []
+      parameters: 
+      - name: status
+        in: query
+        description: status of order
+        required: true
+        schema:
+          type: string
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppliesOrderListResponseDTO'
+  /supplies-order/{suppliesOrderId}:
+    get:
+      tags:
+      - "supplies"
+      summary: "get supplies order by id"
+      description: ""
+      operationId: "supplyGetById"
+      security: 
+        - bearerJWT: []
+      parameters: 
+      - name: suppliesOrderId
+        in: path
+        description: ID of order
+        required: true
+        schema:
+          type: string
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppliesOrderGetByIdResponseDTO'
 components: 
   securitySchemes:
     bearerJWT:
@@ -208,13 +257,39 @@ components:
         area_id:
           type: "string"
       xml:
-        name: "Supply"
+        name: "supplies-order"
     SuppliesOrderCreateResponseDTO:
       type: "object"
       properties:
         id:
           type: "string"
       xml:
-        name: "Supply"
+        name: "supplies-order"
+    SuppliesOrderListResponseDTO:
+      type: "object"
+      properties:
+        items:
+          type: "array"
+          items:
+            properties:
+              supply_type:
+                type: "string"
+              supply_description:
+                type: "string"
+              area_id:
+                type: "string"
+      xml:
+        name: "supplies-order-list"
+    SuppliesOrderGetByIdResponseDTO:
+      type: "object"
+      properties:
+        supply_type:
+          type: "string"
+        supply_description:
+          type: "string"
+        area_id:
+          type: "string"
+      xml:
+        name: "supplies-order"
   
   

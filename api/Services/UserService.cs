@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ArqNetCore.DTOs.User;
 using ArqNetCore.DTOs.Auth;
@@ -12,6 +14,8 @@ namespace ArqNetCore.Services
     {
         private readonly ILogger<UserService> _logger;
 
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private ArqNetCoreDbContext _dbContext;
         private IAuthService _authService;
         private IAccountService _accountService;
@@ -20,13 +24,15 @@ namespace ArqNetCore.Services
             ILogger<UserService> logger,
             ArqNetCoreDbContext dbContext,
             IAuthService authService,
-            IAccountService accountService
+            IAccountService accountService,
+            IHttpContextAccessor httpContextAccessor
         )
         {
             _logger = logger;
             _dbContext = dbContext;
             _authService = authService;
             _accountService = accountService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public UserSignUpResultDTO UserSignUp(UserSignUpDTO userSignUpDTO)
@@ -60,7 +66,7 @@ namespace ArqNetCore.Services
             AuthTokenDTO authTokenDTO = new AuthTokenDTO{
                 SubjectRaw = new Dictionary<string, string>
                 {
-                    ["id"] = userSignInDTO.Email
+                    [ClaimType.ID] = userSignInDTO.Email
                 },
                 Claims = new Dictionary<string, object>()
             };
@@ -70,5 +76,18 @@ namespace ArqNetCore.Services
             };
         }
 
+        public UserAuthContextDTO UserAuthContext(){
+            ClaimsPrincipal claimsPrincipal = _httpContextAccessor.HttpContext.User;
+            Claim idClaim = claimsPrincipal.FindFirst(ClaimType.ID);
+            return new UserAuthContextDTO{
+                Id = idClaim.Value
+            };
+        }
+        protected class ClaimType
+        {
+            public static string ID { get; set; } = "id";
+        }
     }
+
+    
 }

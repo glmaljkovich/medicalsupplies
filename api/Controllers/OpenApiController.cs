@@ -3,6 +3,7 @@ using System.IO;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using ArqNetCore.Services;
@@ -16,9 +17,9 @@ namespace ArqNetCore.Controllers
     [Route("open-api")]
     public class OpenApiController : ControllerBase
     {
-        IHostingEnvironment _hostingEnvironment;
-        public OpenApiController(IHostingEnvironment hostingEnvironment) {
-            _hostingEnvironment = hostingEnvironment;
+        IHostEnvironment _hostEnvironment;
+        public OpenApiController(IHostEnvironment hostEnvironment) {
+            _hostEnvironment = hostEnvironment;
         }
 
         [HttpGet]
@@ -27,7 +28,7 @@ namespace ArqNetCore.Controllers
         public IActionResult BannerImage()
         {
             var file = Path.Combine(
-                _hostingEnvironment.ContentRootPath, 
+                _hostEnvironment.ContentRootPath, 
                 "api.yaml"
             );
             return PhysicalFile(file, "application/x-yaml");

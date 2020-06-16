@@ -89,9 +89,11 @@ namespace ArqNetCore
             services.AddHttpClient();
             services.AddControllers();
             services.AddSwaggerDocument();
+            services.AddHttpContextAccessor();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ISuppliesOrderService, SuppliesOrderService>();
             
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -160,12 +162,6 @@ namespace ArqNetCore
                 settings.SwaggerRoutes.Add(new SwaggerUi3Route("v1", "/open-api/api.yaml"));
                 //settings.SwaggerUiRoute = "/swagger";
             });
-
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"api.yaml")),
-            //    RequestPath = new PathString("/api.yaml")
-            //});
 
             app.UseEndpoints(endpoints =>
             {
