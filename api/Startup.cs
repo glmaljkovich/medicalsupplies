@@ -17,6 +17,8 @@ using MySql.Data.EntityFrameworkCore.Infrastructure;
 using ArqNetCore.Configuration;
 using ArqNetCore.Services;
 using NSwag.AspNetCore;
+using Serilog;
+using Serilog.Events;
 
 namespace ArqNetCore
 {
@@ -146,6 +148,8 @@ namespace ArqNetCore
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseSerilogRequestLogging(); 
 
             //app.UseHttpsRedirection();
 
