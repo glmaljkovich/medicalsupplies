@@ -6,5 +6,7 @@ namespace ArqNetCore.Services
     {
         SuppliesOrderCreateResultDTO Create(SuppliesOrderCreateDTO supplyOrderCreateDTO);
 
+        SuppliesOrderListResultDTO List();
+
     }
 }

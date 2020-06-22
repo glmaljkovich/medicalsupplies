@@ -52,6 +52,7 @@ namespace ArqNetCore.Controllers
             };
             return suppliesOrderCreateResponseDTO;
         }
+        
 
         protected IEnumerable<SuppliesOrderCreateAttributeDTO> map(IEnumerable<Supply_attributes> suppliesOrderCreateRequestDTOs){
             if(suppliesOrderCreateRequestDTOs == null){
@@ -65,6 +66,22 @@ namespace ArqNetCore.Controllers
                     SupplyAttributeValue = supplyAttributes.Value
                 };
             });
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("")]
+        public SuppliesOrderListResponseDTO Create()
+        { 
+            _logger.LogInformation("List supplies orders:");
+            SuppliesOrderListResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.List();
+            SuppliesOrderListResponseDTO suppliesOrderCreateResponseDTO = new SuppliesOrderListResponseDTO
+            {
+                Items = suppliesOrderCreateResultDTO.items.Select(x => new SuppliesOrderListItemResponseDTO{
+                    Area_id = x.AreaId
+                }).ToList()
+            };
+            return suppliesOrderCreateResponseDTO;
         }
     }
 }

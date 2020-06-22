@@ -6,6 +6,7 @@ using ArqNetCore.DTOs.SuppliesOrder;
 using ArqNetCore.DTOs.User;
 using ArqNetCore.Entities;
 using ArqNetCore.Configuration;
+using System.Linq;
 
 namespace ArqNetCore.Services
 {
@@ -27,14 +28,13 @@ namespace ArqNetCore.Services
         }
 
         public SuppliesOrderCreateResultDTO Create(SuppliesOrderCreateDTO supplyOrderCreateDTO){
-
-            DbSet<SupplyType>          supplyTypes = _dbContext.SupplyTypes;
+            DbSet<SupplyType>          supplyTypes          = _dbContext.SupplyTypes;
             DbSet<SupplyTypeAttribute> supplyTypeAttributes = _dbContext.SupplyTypeAttributes;
-            DbSet<SuppliesOrder>       suppliesOrders = _dbContext.SuppliesOrders;
-            DbSet<SupplyAttribute>     supplyAttributes = _dbContext.SupplyAttributes;
-            DbSet<Account>             accounts = _dbContext.Accounts;
-            DbSet<Area>                areas = _dbContext.Areas;
-
+            DbSet<Supply>              supplies             = _dbContext.Supplies;
+            DbSet<SuppliesOrder>       suppliesOrders       = _dbContext.SuppliesOrders;
+            DbSet<SupplyAttribute>     supplyAttributes     = _dbContext.SupplyAttributes;
+            DbSet<Account>             accounts             = _dbContext.Accounts;
+            DbSet<Area>                areas                = _dbContext.Areas;
             UserAuthContextDTO userAuthContextDTO = _iUserService.UserAuthContext();
             Account account = accounts.Find(userAuthContextDTO.Id);
             Area area = areas.Find(supplyOrderCreateDTO.AreaId);
@@ -45,6 +45,7 @@ namespace ArqNetCore.Services
                 Area = area
             };
             SupplyType supplyType = supplyTypes.Find(supplyOrderCreateDTO.SupplyType);
+            //TODO verify not null supplyType
             EntityEntry<SuppliesOrder> entityEntry = suppliesOrders.Add(suppliesOrder);
             Supply supply = new Supply
             {
@@ -57,7 +58,6 @@ namespace ArqNetCore.Services
             {
                 // SupplyAttribute  * -> Supply              * -> SupplyType
                 //                  * -> SupplyTypeAttribute * -> SupplyType
-                //TODO verify not null supplyType
                 string attributeName = suppliesOrderCreateAttributeDTO.SupplyAttributeName;
                 SupplyTypeAttribute supplyTypeAttribute = supplyTypeAttributes.Find(supplyType.Id, attributeName);
                 //TODO verify not null supplyTypeAttribute
@@ -68,11 +68,30 @@ namespace ArqNetCore.Services
                 };
                 supplyAttributes.Add(supplyAttribute);
             }
-            _dbContext.Supplies.Add(supply);
+            supplies.Add(supply);
             _dbContext.SaveChanges();
             return new SuppliesOrderCreateResultDTO
             {
                 Id = suppliesOrder.Id
+            };
+        }
+
+        public SuppliesOrderListResultDTO List(){
+            DbSet<SupplyType>          supplyTypes          = _dbContext.SupplyTypes;
+            DbSet<SupplyTypeAttribute> supplyTypeAttributes = _dbContext.SupplyTypeAttributes;
+            DbSet<Supply>              supplies             = _dbContext.Supplies;
+            DbSet<SuppliesOrder>       suppliesOrders       = _dbContext.SuppliesOrders;
+            DbSet<SupplyAttribute>     supplyAttributes     = _dbContext.SupplyAttributes;
+            DbSet<Account>             accounts             = _dbContext.Accounts;
+            DbSet<Area>                areas                = _dbContext.Areas;
+            IEnumerable<SuppliesOrderListItemResultDTO> items = supplies.Select((Supply supply) => new SuppliesOrderListItemResultDTO{
+                SupplyType = supply.SupplyTypeId,
+                AreaId = supply.SuppliesOrder.AreaId,
+                Informer = supply.SuppliesOrder.AccountId
+            });
+
+            return new SuppliesOrderListResultDTO{
+                items = items
             };
         }
     }

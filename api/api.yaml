@@ -279,16 +279,25 @@ components:
         items:
           type: "array"
           items:
-            properties:
-              supply_type:
-                type: "string"
-              area_id:
-                type: "string"
+            $ref: '#/components/schemas/SuppliesOrderListItemResponseDTO'
       xml:
         name: "supplies-order-list"
+    SuppliesOrderListItemResponseDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        supply_type:
+          type: "string"
+        area_id:
+          type: "string"
     SuppliesOrderGetByIdResponseDTO:
       type: "object"
       properties:
+        id:
+          type: "integer"
+          format: "int64"
         supply_type:
           type: "string"
         supply_attributes:
