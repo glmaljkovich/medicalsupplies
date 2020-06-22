@@ -54,3 +54,20 @@ You can read [api.yaml]() or browse:
 ```
 http://localhost:5000/swagger
 ```
+## Logger
+
+Use [Serilog](https://github.com/serilog/serilog-aspnetcore) to manage logg, first install 
+
+```
+dotnet add package Serilog.AspNetCore
+```
+
+For use Seq install:
+```
+dotnet add package Serilog.Sinks.Seq
+```
+
+And run Seq image:
+```
+docker run --rm -it -e ACCEPT_EULA=Y -p 5341:80 datalust/seq
+```

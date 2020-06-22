@@ -18,6 +18,7 @@ using ArqNetCore.Configuration;
 using ArqNetCore.Services;
 using NSwag.AspNetCore;
 using Serilog;
+using Serilog.Events;
 
 namespace ArqNetCore
 {
