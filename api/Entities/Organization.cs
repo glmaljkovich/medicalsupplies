@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ArqNetCore.Entities
 
 {
-    public class Area
+    public class Organization
     {
         [Key]
-        [StringLength(32)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
 
     }
 }

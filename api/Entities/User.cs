@@ -13,6 +13,6 @@ namespace ArqNetCore.Entities
         public string LastName { get; set; }
 
         [ForeignKey("Email")]
-        public Account Account { get; set; }
+        public virtual Account Account { get; set; }
     }
 }

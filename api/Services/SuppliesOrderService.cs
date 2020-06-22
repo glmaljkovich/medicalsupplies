@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ArqNetCore.DTOs.SuppliesOrder;
 using ArqNetCore.DTOs.User;
 using ArqNetCore.Entities;
@@ -24,25 +27,52 @@ namespace ArqNetCore.Services
         }
 
         public SuppliesOrderCreateResultDTO Create(SuppliesOrderCreateDTO supplyOrderCreateDTO){
+
+            DbSet<SupplyType>          supplyTypes = _dbContext.SupplyTypes;
+            DbSet<SupplyTypeAttribute> supplyTypeAttributes = _dbContext.SupplyTypeAttributes;
+            DbSet<SuppliesOrder>       suppliesOrders = _dbContext.SuppliesOrders;
+            DbSet<SupplyAttribute>     supplyAttributes = _dbContext.SupplyAttributes;
+            DbSet<Account>             accounts = _dbContext.Accounts;
+            DbSet<Area>                areas = _dbContext.Areas;
+
             UserAuthContextDTO userAuthContextDTO = _iUserService.UserAuthContext();
-            Account account = _dbContext.Accounts.Find(userAuthContextDTO.Id);
-            Area area = _dbContext.Areas.Find(supplyOrderCreateDTO.AreaId);
+            Account account = accounts.Find(userAuthContextDTO.Id);
+            Area area = areas.Find(supplyOrderCreateDTO.AreaId);
+            //TODO verify not null area
             SuppliesOrder suppliesOrder = new SuppliesOrder
             {
                 Account = account,
                 Area = area
             };
-            _dbContext.SuppliesOrders.Add(suppliesOrder);
+            SupplyType supplyType = supplyTypes.Find(supplyOrderCreateDTO.SupplyType);
+            EntityEntry<SuppliesOrder> entityEntry = suppliesOrders.Add(suppliesOrder);
             Supply supply = new Supply
             {
-                SupplyType = supplyOrderCreateDTO.SupplyType,
-                Description = supplyOrderCreateDTO.SupplyDescription,
+                SupplyType = supplyType,
                 SuppliesOrder = suppliesOrder
             };
+
+            IEnumerable<SuppliesOrderCreateAttributeDTO> suppliesOrderCreateAttributeDTOs = supplyOrderCreateDTO.SupplyAttributes;
+            foreach (SuppliesOrderCreateAttributeDTO suppliesOrderCreateAttributeDTO in suppliesOrderCreateAttributeDTOs)
+            {
+                // SupplyAttribute  * -> Supply              * -> SupplyType
+                //                  * -> SupplyTypeAttribute * -> SupplyType
+                //TODO verify not null supplyType
+                string attributeName = suppliesOrderCreateAttributeDTO.SupplyAttributeName;
+                SupplyTypeAttribute supplyTypeAttribute = supplyTypeAttributes.Find(supplyType.Id, attributeName);
+                //TODO verify not null supplyTypeAttribute
+                SupplyAttribute supplyAttribute = new SupplyAttribute{
+                    Supply = supply,
+                    AttributeName = attributeName,
+                    AttributeValue = suppliesOrderCreateAttributeDTO.SupplyAttributeValue
+                };
+                supplyAttributes.Add(supplyAttribute);
+            }
             _dbContext.Supplies.Add(supply);
+            _dbContext.SaveChanges();
             return new SuppliesOrderCreateResultDTO
             {
-                Id = supply.Id
+                Id = suppliesOrder.Id
             };
         }
     }

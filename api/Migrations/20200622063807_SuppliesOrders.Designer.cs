@@ -3,14 +3,16 @@ using System;
 using ArqNetCore.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ArqNetCore.Migrations
 {
     [DbContext(typeof(ArqNetCoreDbContext))]
-    partial class ArqNetCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200622063807_SuppliesOrders")]
+    partial class SuppliesOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,23 +50,6 @@ namespace ArqNetCore.Migrations
                     b.HasKey("Name");
 
                     b.ToTable("Areas");
-
-                    b.HasData(
-                        new
-                        {
-                            Name = "ATENCION_A_PACIENTES",
-                            Description = "Atención de pacientes"
-                        },
-                        new
-                        {
-                            Name = "TERAPIA_INTENSIVA",
-                            Description = "Terapia Intensiva"
-                        },
-                        new
-                        {
-                            Name = "TECNICOS",
-                            Description = "Técnicos"
-                        });
                 });
 
             modelBuilder.Entity("ArqNetCore.Entities.Organization", b =>
@@ -158,33 +143,6 @@ namespace ArqNetCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SupplyTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "MASCARA_PROTECTORA",
-                            Description = "Máscara protectora"
-                        },
-                        new
-                        {
-                            Id = "BARBIJO",
-                            Description = "Barbijo"
-                        },
-                        new
-                        {
-                            Id = "RESPIRADOR",
-                            Description = "Respirador"
-                        },
-                        new
-                        {
-                            Id = "GUANTE",
-                            Description = "Guante"
-                        },
-                        new
-                        {
-                            Id = "MEDICAMENTO",
-                            Description = "Medicamento"
-                        });
                 });
 
             modelBuilder.Entity("ArqNetCore.Entities.SupplyTypeAttribute", b =>
@@ -203,14 +161,6 @@ namespace ArqNetCore.Migrations
                     b.HasKey("SupplyTypeId", "AttributeName");
 
                     b.ToTable("SupplyTypeAttributes");
-
-                    b.HasData(
-                        new
-                        {
-                            SupplyTypeId = "MEDICAMENTO",
-                            AttributeName = "TIPO_MEDICAMENTO",
-                            AttributeDescription = "Tipo de medicamento"
-                        });
                 });
 
             modelBuilder.Entity("ArqNetCore.Entities.User", b =>

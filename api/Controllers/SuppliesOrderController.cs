@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ namespace ArqNetCore.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("supply-order")]
+    [Route("supplies-order")]
     public class SuppliesOrderOrderController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
@@ -38,16 +39,32 @@ namespace ArqNetCore.Controllers
         public SuppliesOrderCreateResponseDTO Create(SuppliesOrderCreateRequestDTO suppliesOrderCreateRequestDTO)
         { 
             _logger.LogInformation("Create supplies order:" + suppliesOrderCreateRequestDTO.Supply_type);
-            SuppliesOrderCreateDTO suppliesOrderCreateDTO = new SuppliesOrderCreateDTO{
+            SuppliesOrderCreateDTO suppliesOrderCreateDTO = new SuppliesOrderCreateDTO
+            {
                 SupplyType = suppliesOrderCreateRequestDTO.Supply_type,
-                SupplyDescription = suppliesOrderCreateRequestDTO.Supply_description,
+                SupplyAttributes = map(suppliesOrderCreateRequestDTO.Supply_attributes),
                 AreaId = suppliesOrderCreateRequestDTO.Area_id
             };
             SuppliesOrderCreateResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.Create(suppliesOrderCreateDTO);
-            SuppliesOrderCreateResponseDTO suppliesOrderCreateResponseDTO = new SuppliesOrderCreateResponseDTO{
+            SuppliesOrderCreateResponseDTO suppliesOrderCreateResponseDTO = new SuppliesOrderCreateResponseDTO
+            {
                 Id = suppliesOrderCreateResultDTO.Id
             };
-            return null;
+            return suppliesOrderCreateResponseDTO;
+        }
+
+        protected IEnumerable<SuppliesOrderCreateAttributeDTO> map(IEnumerable<Supply_attributes> suppliesOrderCreateRequestDTOs){
+            if(suppliesOrderCreateRequestDTOs == null){
+                return new List<SuppliesOrderCreateAttributeDTO>();
+            }
+            return suppliesOrderCreateRequestDTOs.Select((Supply_attributes supplyAttributes) => 
+            {
+                return new SuppliesOrderCreateAttributeDTO
+                {
+                    SupplyAttributeName = supplyAttributes.Name,
+                    SupplyAttributeValue = supplyAttributes.Value
+                };
+            });
         }
     }
 }
