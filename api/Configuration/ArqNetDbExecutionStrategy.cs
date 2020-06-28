@@ -18,7 +18,7 @@ public class ArqNetDbExecutionStrategy : ExecutionStrategy
         public ArqNetDbExecutionStrategy(DbContext context, int maxRetryCount, TimeSpan maxRetryDelay) :
             base(context, maxRetryCount, maxRetryDelay)
         {
-
+            
         }
 
         protected override bool ShouldRetryOn(Exception exception)

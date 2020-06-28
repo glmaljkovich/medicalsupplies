@@ -8,5 +8,9 @@ namespace ArqNetCore.Services
 
         SuppliesOrderListResultDTO List();
 
+        SuppliesOrderAcceptResultDTO Accept(SuppliesOrderAcceptDTO suppliesOrderAcceptDTO);
+
+        SuppliesOrderRejectResultDTO Reject(SuppliesOrderRejectDTO suppliesOrderRejectDTO);
+
     }
 }

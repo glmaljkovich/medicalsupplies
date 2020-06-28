@@ -11,7 +11,7 @@ namespace ArqNetCore.DTOs.SuppliesOrder
 
     public class SuppliesOrderListItemResultDTO
     {
-        
+        public int Id { get; set; }
         public string AreaId { get; set; }
         public string OrganizationId { get; set; }
         public string SupplyType { get; set; }

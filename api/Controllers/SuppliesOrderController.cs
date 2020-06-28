@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using ArqNetCore.Services;
-using ArqNetCore.DTOs.User;
-using ArqNetCore.DTOs.Account;
 using ArqNetCore.DTOs.SuppliesOrder;
 
 namespace ArqNetCore.Controllers
@@ -42,7 +38,7 @@ namespace ArqNetCore.Controllers
             SuppliesOrderCreateDTO suppliesOrderCreateDTO = new SuppliesOrderCreateDTO
             {
                 SupplyType = suppliesOrderCreateRequestDTO.Supply_type,
-                SupplyAttributes = map(suppliesOrderCreateRequestDTO.Supply_attributes),
+                SupplyAttributes = _map(suppliesOrderCreateRequestDTO.Supply_attributes),
                 AreaId = suppliesOrderCreateRequestDTO.Area_id
             };
             SuppliesOrderCreateResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.Create(suppliesOrderCreateDTO);
@@ -53,8 +49,7 @@ namespace ArqNetCore.Controllers
             return suppliesOrderCreateResponseDTO;
         }
         
-
-        protected IEnumerable<SuppliesOrderCreateAttributeDTO> map(IEnumerable<Supply_attributes> suppliesOrderCreateRequestDTOs){
+        private IEnumerable<SuppliesOrderCreateAttributeDTO> _map(IEnumerable<Supply_attributes> suppliesOrderCreateRequestDTOs){
             if(suppliesOrderCreateRequestDTOs == null){
                 return new List<SuppliesOrderCreateAttributeDTO>();
             }
@@ -71,17 +66,52 @@ namespace ArqNetCore.Controllers
         [Authorize]
         [HttpGet]
         [Route("")]
-        public SuppliesOrderListResponseDTO Create()
+        public SuppliesOrderListResponseDTO List()
         { 
             _logger.LogInformation("List supplies orders:");
             SuppliesOrderListResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.List();
             SuppliesOrderListResponseDTO suppliesOrderCreateResponseDTO = new SuppliesOrderListResponseDTO
             {
-                Items = suppliesOrderCreateResultDTO.items.Select(x => new SuppliesOrderListItemResponseDTO{
-                    Area_id = x.AreaId
+                Items = suppliesOrderCreateResultDTO.items.Select(
+                    (SuppliesOrderListItemResultDTO x) => {
+                    return new SuppliesOrderListItemResponseDTO
+                    {
+                        Id = x.Id,
+                        Organization_id = x.OrganizationId,
+                        Area_id = x.AreaId
+                    };
                 }).ToList()
             };
             return suppliesOrderCreateResponseDTO;
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("accept")]
+        public SuppliesOrderAcceptResponseDTO Accept(SuppliesOrderAcceptRequestDTO suppliesOrderAcceptRequestDTO)
+        { 
+            _logger.LogInformation("accept supplies order");
+            SuppliesOrderAcceptDTO suppliesOrderAcceptDTO = new SuppliesOrderAcceptDTO{
+                SuppliesOrderId = suppliesOrderAcceptRequestDTO.Supplies_order_id,
+                OrganizationId = suppliesOrderAcceptRequestDTO.Organization_id
+            };
+            SuppliesOrderAcceptResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.Accept(suppliesOrderAcceptDTO);
+            SuppliesOrderAcceptResponseDTO suppliesOrderAcceptResponseDTO = new SuppliesOrderAcceptResponseDTO{ };
+            return suppliesOrderAcceptResponseDTO;
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("reject")]
+        public SuppliesOrderRejectResponseDTO Reject(SuppliesOrderRejectRequestDTO suppliesOrderRejectRequestDTO)
+        { 
+            _logger.LogInformation("reject supplies order");
+            SuppliesOrderRejectDTO suppliesOrderRejectDTO = new SuppliesOrderRejectDTO{
+                SuppliesOrderId = suppliesOrderRejectRequestDTO.Supplies_order_id
+            };
+            SuppliesOrderRejectResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.Reject(suppliesOrderRejectDTO);
+            SuppliesOrderRejectResponseDTO suppliesOrderRejectResponseDTO = new SuppliesOrderRejectResponseDTO{ };
+            return suppliesOrderRejectResponseDTO;
         }
     }
 }

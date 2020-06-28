@@ -42,7 +42,8 @@ namespace ArqNetCore.Services
             SuppliesOrder suppliesOrder = new SuppliesOrder
             {
                 Account = account,
-                Area = area
+                Area = area,
+                Status = SuppliesOrderStatus.Pending
             };
             SupplyType supplyType = supplyTypes.Find(supplyOrderCreateDTO.SupplyType);
             //TODO verify not null supplyType
@@ -77,22 +78,35 @@ namespace ArqNetCore.Services
         }
 
         public SuppliesOrderListResultDTO List(){
-            DbSet<SupplyType>          supplyTypes          = _dbContext.SupplyTypes;
-            DbSet<SupplyTypeAttribute> supplyTypeAttributes = _dbContext.SupplyTypeAttributes;
-            DbSet<Supply>              supplies             = _dbContext.Supplies;
-            DbSet<SuppliesOrder>       suppliesOrders       = _dbContext.SuppliesOrders;
-            DbSet<SupplyAttribute>     supplyAttributes     = _dbContext.SupplyAttributes;
-            DbSet<Account>             accounts             = _dbContext.Accounts;
-            DbSet<Area>                areas                = _dbContext.Areas;
+            DbSet<Supply> supplies = _dbContext.Supplies;
             IEnumerable<SuppliesOrderListItemResultDTO> items = supplies.Select((Supply supply) => new SuppliesOrderListItemResultDTO{
+                Id = supply.SuppliesOrder.Id,
                 SupplyType = supply.SupplyTypeId,
                 AreaId = supply.SuppliesOrder.AreaId,
                 Informer = supply.SuppliesOrder.AccountId
             });
-
             return new SuppliesOrderListResultDTO{
                 items = items
             };
+        }
+
+        public SuppliesOrderAcceptResultDTO Accept(SuppliesOrderAcceptDTO suppliesOrderAcceptDTO){
+            DbSet<SuppliesOrder> suppliesOrders = _dbContext.SuppliesOrders;
+            DbSet<Organization> organizations = _dbContext.Organizations;
+            SuppliesOrder suppliesOrder = suppliesOrders.Find(suppliesOrderAcceptDTO.SuppliesOrderId);
+            Organization organization = organizations.Find(suppliesOrderAcceptDTO.OrganizationId);
+            suppliesOrder.Status = SuppliesOrderStatus.Accepted;
+            suppliesOrder.Organization = organization;
+            suppliesOrders.Update(suppliesOrder);
+            return new SuppliesOrderAcceptResultDTO{ };
+        }
+
+        public SuppliesOrderRejectResultDTO Reject(SuppliesOrderRejectDTO suppliesOrderRejectDTO){
+            DbSet<SuppliesOrder> suppliesOrders = _dbContext.SuppliesOrders;
+            SuppliesOrder suppliesOrder = suppliesOrders.Find(suppliesOrderRejectDTO.SuppliesOrderId);
+            suppliesOrder.Status = SuppliesOrderStatus.Rejected;
+            suppliesOrders.Update(suppliesOrder);
+            return new SuppliesOrderRejectResultDTO{ };
         }
     }
 }

@@ -14,6 +14,8 @@ tags:
   description: "manage medical supplies distribution"
 - name: "user"
   description: "manage user information"
+- name: "organization"
+  description: "manage organization information"
 - name: "authentication"
   description: "Access control"
 paths:
@@ -163,6 +165,74 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuppliesOrderGetByIdResponseDTO'
+  /supplies-order/accept:
+    post:
+      tags:
+      - "supplies"
+      summary: "accept an order and bind it to organization"
+      description: ""
+      operationId: "suppliesOrderAccept"
+      security: 
+        - bearerJWT: []
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuppliesOrderAcceptRequestDTO'
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppliesOrderAcceptResponseDTO'
+  /supplies-order/reject:
+    post:
+      tags:
+      - "supplies"
+      summary: "reject an order"
+      description: ""
+      operationId: "suppliesOrderReject"
+      security: 
+        - bearerJWT: []
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuppliesOrderRejectRequestDTO'
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppliesOrderRejectResponseDTO'
+  /organization:
+    get:
+      tags:
+      - "organization"
+      summary: "list organizations"
+      description: ""
+      operationId: "organizationList"
+      security: 
+        - bearerJWT: []
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationListResponseDTO'
 components: 
   securitySchemes:
     bearerJWT:
@@ -199,7 +269,7 @@ components:
       properties:
         id:
           type: "integer"
-          format: "int64"
+          format: "int32"
       xml:
         name: "user"
     UserSignInRequestDTO:
@@ -223,7 +293,7 @@ components:
           type: "string"
         expires_in:
           type: "integer"
-          format: "int64"
+          format: "int32"
         refresh_token:
           type: "string"
       xml:
@@ -270,7 +340,7 @@ components:
       properties:
         id:
           type: "integer"
-          format: "int64"
+          format: "int32"
       xml:
         name: "supplies-order"
     SuppliesOrderListResponseDTO:
@@ -287,17 +357,40 @@ components:
       properties:
         id:
           type: "integer"
-          format: "int64"
+          format: "int32"
         supply_type:
           type: "string"
         area_id:
           type: "string"
+        organization_id:
+          type: "string"
+        informer_id:
+          type: "string"
+    OrganizationListResponseDTO:
+      type: "object"
+      properties:
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/OrganizationListItemResponseDTO'
+      xml:
+        name: "organization-list"
+    OrganizationListItemResponseDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        name:
+          type: "string"
+      xml:
+        name: "organization"
     SuppliesOrderGetByIdResponseDTO:
       type: "object"
       properties:
         id:
           type: "integer"
-          format: "int64"
+          format: "int32"
         supply_type:
           type: "string"
         supply_attributes:
@@ -313,5 +406,22 @@ components:
           type: "string"
       xml:
         name: "supplies-order"
-  
-  
+    SuppliesOrderAcceptRequestDTO:
+      type: "object"
+      properties:
+        supplies_order_id:
+          type: "integer"
+          format: "int32"
+        organization_id:
+          type: "integer"
+          format: "int32"
+    SuppliesOrderAcceptResponseDTO:
+      type: "object"
+    SuppliesOrderRejectRequestDTO:
+      type: "object"
+      properties:
+        supplies_order_id:
+          type: "integer"
+          format: "int32"
+    SuppliesOrderRejectResponseDTO:
+      type: "object"

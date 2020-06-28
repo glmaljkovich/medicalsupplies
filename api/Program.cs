@@ -13,8 +13,8 @@ namespace ArqNetCore
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console() // Output Console
-            .WriteTo.File(new RenderedCompactJsonFormatter(), "../logs/log-medical-supplies.ndjson") // Output to log file with json structure
-            .WriteTo.Seq("http://localhost:5341") // Output to Seq
+            //.WriteTo.File(new RenderedCompactJsonFormatter(), "../logs/log-medical-supplies.ndjson") // Output to log file with json structure
+            //.WriteTo.Seq("http://localhost:5341") // Output to Seq
             .CreateLogger();
         try
         {

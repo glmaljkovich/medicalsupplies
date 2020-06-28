@@ -20,5 +20,14 @@ namespace ArqNetCore.Entities
         [ForeignKey("OrganizationId")]
         public virtual Organization Organization { get; set; }
 
+        [StringLength(32)]
+        public string Status { get; set; }
+
+    }
+
+    public class SuppliesOrderStatus{
+        public static string Accepted { get; set; } = "Accepted";
+        public static string Pending { get; set; } = "Pending";
+        public static string Rejected { get; set; } = "Rejected";
     }
 }
