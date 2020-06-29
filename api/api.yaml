@@ -18,6 +18,8 @@ tags:
   description: "manage organization information"
 - name: "authentication"
   description: "Access control"
+- name: "area"
+  description: "an area in which a medical supply is needed"
 paths:
   /user/signup:
     post:
@@ -109,6 +111,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserProfileResponseDTO'
+  /areas:
+    get:
+      tags:
+      - "area"
+      summary: "list of areas"
+      description: ""
+      operationId: "areaList"
+      security: 
+        - bearerJWT: []
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaListResponseDTO'
   /supplies-order:
     post:
       tags:
@@ -387,6 +407,22 @@ components:
           type: "string"
       xml:
         name: "data"
+    AreaListResponseDTO:
+      type: "object"
+      properties:
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/AreaListItemResponseDTO'
+      xml:
+        name: "data"
+    AreaListItemResponseDTO:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        description:
+          type: "string"
     SuppliesOrderCreateRequestDTO:
       type: "object"
       required: 

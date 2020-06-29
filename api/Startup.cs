@@ -97,6 +97,7 @@ namespace ArqNetCore
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ISuppliesOrderService, SuppliesOrderService>();
             services.AddScoped<IOrganizationService, OrganizationService>();
+            services.AddScoped<IAreaService, AreaService>();
             
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);

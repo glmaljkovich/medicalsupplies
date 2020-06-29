@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -55,10 +54,10 @@ namespace ArqNetCore.Controllers
         public SuppliesOrderListResponseDTO List()
         { 
             _logger.LogInformation("List supplies orders:");
-            SuppliesOrderListResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.List();
-            SuppliesOrderListResponseDTO suppliesOrderCreateResponseDTO = new SuppliesOrderListResponseDTO
+            SuppliesOrderListResultDTO suppliesOrderListResultDTO = _iSuppliesOrderService.List();
+            SuppliesOrderListResponseDTO suppliesOrderListResponseDTO = new SuppliesOrderListResponseDTO
             {
-                Items = suppliesOrderCreateResultDTO.Items.Select(
+                Items = suppliesOrderListResultDTO.Items.Select(
                     (SuppliesOrderListItemResultDTO suppliesOrderListItemResultDTO) => {
                     return new SuppliesOrderListItemResponseDTO
                     {
@@ -72,7 +71,7 @@ namespace ArqNetCore.Controllers
                     };
                 }).ToList()
             };
-            return suppliesOrderCreateResponseDTO;
+            return suppliesOrderListResponseDTO;
         }
 
         [Authorize]
