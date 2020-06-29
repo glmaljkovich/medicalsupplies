@@ -73,18 +73,41 @@ namespace ArqNetCore.Controllers
             SuppliesOrderListResponseDTO suppliesOrderCreateResponseDTO = new SuppliesOrderListResponseDTO
             {
                 Items = suppliesOrderCreateResultDTO.items.Select(
-                    (SuppliesOrderListItemResultDTO x) => {
+                    (SuppliesOrderListItemResultDTO suppliesOrderListItemResultDTO) => {
                     return new SuppliesOrderListItemResponseDTO
                     {
-                        Id = x.Id,
-                        Organization_id = x.OrganizationId,
-                        Area_id = x.AreaId
+                        Id = suppliesOrderListItemResultDTO.Id,
+                        Supply_type = suppliesOrderListItemResultDTO.SupplyType,
+                        Informer_id = suppliesOrderListItemResultDTO.InformerId,
+                        Status = suppliesOrderListItemResultDTO.Status,
+                        Organization_id = suppliesOrderListItemResultDTO.OrganizationId,
+                        Organization_name = suppliesOrderListItemResultDTO.OrganizationName,
+                        Area_id = suppliesOrderListItemResultDTO.AreaId
                     };
                 }).ToList()
             };
             return suppliesOrderCreateResponseDTO;
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("{id}")]
+        public SuppliesOrderGetByIdResponseDTO GetById(int id)
+        { 
+            _logger.LogInformation("accept supplies order");
+            SuppliesOrderGetByIdResultDTO suppliesOrderGetByIdResultDTO = _iSuppliesOrderService.GetById(id);
+            SuppliesOrderGetByIdResponseDTO suppliesOrderGetByIdResponseDTO = new SuppliesOrderGetByIdResponseDTO{ 
+                Id = suppliesOrderGetByIdResultDTO.Id,
+                Supply_type = suppliesOrderGetByIdResultDTO.SupplyType,
+                Area_id = suppliesOrderGetByIdResultDTO.AreaId,
+                Status = suppliesOrderGetByIdResultDTO.Status,
+                Informer_id = suppliesOrderGetByIdResultDTO.InformerId,
+                Organization_id = suppliesOrderGetByIdResultDTO.OrganizationId,
+                Organization_name = suppliesOrderGetByIdResultDTO.OrganizationName,
+                Attributes = suppliesOrderGetByIdResultDTO.Attributes
+            };
+            return suppliesOrderGetByIdResponseDTO;
+        }
         [Authorize]
         [HttpPost]
         [Route("accept")]

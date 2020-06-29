@@ -35,11 +35,11 @@ namespace ArqNetCore.Controllers
         [Route("")]
         public OrganizationListResponseDTO List()
         { 
-            _logger.LogInformation("List supplies orders:");
-            OrganizationListResultDTO organizationCreateResultDTO = _iOrganizationService.List();
-            OrganizationListResponseDTO organizationCreateResponseDTO = new OrganizationListResponseDTO
+            _logger.LogInformation("List organization:");
+            OrganizationListResultDTO organizationListResultDTO = _iOrganizationService.List();
+            OrganizationListResponseDTO organizationListResponseDTO = new OrganizationListResponseDTO
             {
-                Items = organizationCreateResultDTO.items.Select(
+                Items = organizationListResultDTO.items.Select(
                     (OrganizationListItemResultDTO organizationListItemResultDTO) => 
                     {
                         return new OrganizationListItemResponseDTO
@@ -50,7 +50,31 @@ namespace ArqNetCore.Controllers
                     }
                 ).ToList()
             };
-            return organizationCreateResponseDTO;
+            return organizationListResponseDTO;
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("group-by-supply-type")]
+        public OrganizationGroupBySupplyTypeResponseDTO GroupBySupplyType()
+        { 
+            _logger.LogInformation("organizations group by supply type:");
+            OrganizationGroupBySupplyTypeResultDTO organizationGroupBySupplyTypeResultDTO = _iOrganizationService.GroupBySupplyType();
+            OrganizationGroupBySupplyTypeResponseDTO organizationGroupBySupplyTypeResponseDTO = new OrganizationGroupBySupplyTypeResponseDTO
+            {
+                Items = organizationGroupBySupplyTypeResultDTO.Items
+                .Select((OrganizationGroupBySupplyTypeItemResultDTO organizationGroupBySupplyTypeItemResultDTO) =>  new OrganizationGroupBySupplyTypeItemResponseDTO
+                {
+                    Supply_type_id = organizationGroupBySupplyTypeItemResultDTO.SupplyTypeId,
+                    Organizations = organizationGroupBySupplyTypeItemResultDTO.Organizations
+                    .Select((OrganizationGroupBySupplyTypeItemOrganizationResultDTO organizationGroupBySupplyTypeItemOrganizationResultDTO)=> new OrganizationGroupBySupplyTypeItemOrganizationsResponseDTO{
+                        Organization_id = organizationGroupBySupplyTypeItemOrganizationResultDTO.OrganizationId,
+                        Organization_name = organizationGroupBySupplyTypeItemOrganizationResultDTO.OrganizationName
+                    }).ToList()
+                }
+                ).ToList()
+            };
+            return organizationGroupBySupplyTypeResponseDTO;
         }
 
         

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArqNetCore.Migrations
 {
     [DbContext(typeof(ArqNetCoreDbContext))]
-    [Migration("20200628225145_OrganizationSupplyType")]
-    partial class OrganizationSupplyType
+    [Migration("20200628225145_OrganizationSupplyTypes")]
+    partial class OrganizationSupplyTypes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -100,7 +100,7 @@ namespace ArqNetCore.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ArqNetCore.Entities.OrganizationSupplyType", b =>
+            modelBuilder.Entity("ArqNetCore.Entities.OrganizationSupplyTypes", b =>
                 {
                     b.Property<string>("SupplyTypeId")
                         .HasColumnType("varchar(32)")
@@ -113,7 +113,7 @@ namespace ArqNetCore.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("OrganizationSupplyType");
+                    b.ToTable("OrganizationSupplyTypes");
 
                     b.HasData(
                         new
@@ -295,7 +295,7 @@ namespace ArqNetCore.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ArqNetCore.Entities.OrganizationSupplyType", b =>
+            modelBuilder.Entity("ArqNetCore.Entities.OrganizationSupplyTypes", b =>
                 {
                     b.HasOne("ArqNetCore.Entities.Organization", "Organization")
                         .WithMany()

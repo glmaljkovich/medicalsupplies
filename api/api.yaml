@@ -128,7 +128,7 @@ paths:
       - name: status
         in: query
         description: status of order
-        required: true
+        required: false
         schema:
           type: string
       responses:
@@ -233,6 +233,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrganizationListResponseDTO'
+  /organization/group-by-supply-type:
+    get:
+      tags:
+      - "organization"
+      summary: "group organizations by supply type"
+      description: ""
+      operationId: "organizationGroupBySupplyType"
+      security: 
+        - bearerJWT: []
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationGroupBySupplyTypeResponseDTO'
 components: 
   securitySchemes:
     bearerJWT:
@@ -362,10 +380,18 @@ components:
           type: "string"
         area_id:
           type: "string"
+        status:
+          type: "string"
+          nullable: true
         organization_id:
+          type: "integer"
+          format: "int32"
+          nullable: true
+        organization_name:
           type: "string"
         informer_id:
           type: "string"
+          nullable: true
     OrganizationListResponseDTO:
       type: "object"
       properties:
@@ -393,17 +419,26 @@ components:
           format: "int32"
         supply_type:
           type: "string"
-        supply_attributes:
-          type: "array"
-          items: 
-            type: "object"
-            properties:
-              type:  
-                type: "string"
-              value:  
-               type: "string"
         area_id:
           type: "string"
+        status:
+          type: "string"
+          nullable: true
+        organization_id:
+          type: "integer"
+          format: "int32"
+          nullable: true
+        organization_name:
+          type: "string"
+        informer_id:
+          type: "string"
+          nullable: true
+        area_id:
+          type: "string"
+        attributes:
+          type: "object"
+          additionalProperties:
+            type: string
       xml:
         name: "supplies-order"
     SuppliesOrderAcceptRequestDTO:
@@ -425,3 +460,27 @@ components:
           format: "int32"
     SuppliesOrderRejectResponseDTO:
       type: "object"
+    OrganizationGroupBySupplyTypeResponseDTO:
+      type: "object"
+      properties:
+        items:
+          type: "array"
+          items: 
+            $ref: '#/components/schemas/OrganizationGroupBySupplyTypeItemResponseDTO'
+    OrganizationGroupBySupplyTypeItemResponseDTO:
+      type: "object"
+      properties:
+        supply_type_id:
+          type: "string"
+        organizations:
+          type: "array"
+          items: 
+            $ref: '#/components/schemas/OrganizationGroupBySupplyTypeItemOrganizationsResponseDTO'
+    OrganizationGroupBySupplyTypeItemOrganizationsResponseDTO:
+      type: "object"
+      properties:
+        organization_id:
+          type: "integer"
+          format: "int32"
+        organization_name:
+          type: "string"

@@ -26,8 +26,8 @@ namespace ArqNetCore.Entities
     }
 
     public class SuppliesOrderStatus{
-        public static string Accepted { get; set; } = "Accepted";
-        public static string Pending { get; set; } = "Pending";
-        public static string Rejected { get; set; } = "Rejected";
+        public static string ACCEPTED { get; set; } = "ACCEPTED";
+        public static string PENDING { get; set; } = "PENDING";
+        public static string REJECTED { get; set; } = "REJECTED";
     }
 }

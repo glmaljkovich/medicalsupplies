@@ -36,5 +36,26 @@ namespace ArqNetCore.Services
                 items = items
             };
         }
+        
+
+        public OrganizationGroupBySupplyTypeResultDTO GroupBySupplyType(){
+
+            DbSet<SupplyType> supplyTypes = _dbContext.SupplyTypes;
+            DbSet<OrganizationSupplyType> supportedTypes = _dbContext.OrganizationSupplyTypes;
+            IEnumerable<OrganizationGroupBySupplyTypeItemResultDTO> items = supplyTypes.Select((SupplyType supplyType) => new OrganizationGroupBySupplyTypeItemResultDTO
+            {
+                SupplyTypeId = supplyType.Id,
+                Organizations = supportedTypes
+                .Where((OrganizationSupplyType organizationSupplyType) => organizationSupplyType.SupplyType == supplyType)
+                .Select((OrganizationSupplyType organizationSupplyType) => new OrganizationGroupBySupplyTypeItemOrganizationResultDTO
+                {
+                OrganizationId = organizationSupplyType.OrganizationId,
+                OrganizationName = organizationSupplyType.Organization.Name
+                })
+            });
+            return new OrganizationGroupBySupplyTypeResultDTO{
+                Items = items
+            };
+        }
     }
 }

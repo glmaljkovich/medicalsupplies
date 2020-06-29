@@ -6,6 +6,9 @@ namespace ArqNetCore.Services
     {
         
         OrganizationListResultDTO List();
+        OrganizationGroupBySupplyTypeResultDTO GroupBySupplyType();
+
+        
 
     }
 }

@@ -1,15 +1,8 @@
 using System.Collections.Generic;
 
-
 namespace ArqNetCore.DTOs.SuppliesOrder
 {
-    public class SuppliesOrderListResultDTO
-    {
-        public IEnumerable<SuppliesOrderListItemResultDTO> items { get; set; }
-
-    }
-
-    public class SuppliesOrderListItemResultDTO
+    public class SuppliesOrderGetByIdResultDTO
     {
         public int Id { get; set; }
         public string AreaId { get; set; }
@@ -18,6 +11,6 @@ namespace ArqNetCore.DTOs.SuppliesOrder
         public string SupplyType { get; set; }
         public string InformerId { get; set; }
         public string Status { get; set; }
-
+        public IDictionary<string, string> Attributes { get; set; }
     }
 }

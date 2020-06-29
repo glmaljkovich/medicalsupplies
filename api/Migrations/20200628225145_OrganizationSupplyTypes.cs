@@ -2,7 +2,7 @@
 
 namespace ArqNetCore.Migrations
 {
-    public partial class OrganizationSupplyType : Migration
+    public partial class OrganizationSupplyTypes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,7 @@ namespace ArqNetCore.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "OrganizationSupplyType",
+                name: "OrganizationSupplyTypes",
                 columns: table => new
                 {
                     OrganizationId = table.Column<int>(nullable: false),
@@ -21,15 +21,15 @@ namespace ArqNetCore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrganizationSupplyType", x => new { x.SupplyTypeId, x.OrganizationId });
+                    table.PrimaryKey("PK_OrganizationSupplyTypes", x => new { x.SupplyTypeId, x.OrganizationId });
                     table.ForeignKey(
-                        name: "FK_OrganizationSupplyType_Organizations_OrganizationId",
+                        name: "FK_OrganizationSupplyTypes_Organizations_OrganizationId",
                         column: x => x.OrganizationId,
                         principalTable: "Organizations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OrganizationSupplyType_SupplyTypes_SupplyTypeId",
+                        name: "FK_OrganizationSupplyTypes_SupplyTypes_SupplyTypeId",
                         column: x => x.SupplyTypeId,
                         principalTable: "SupplyTypes",
                         principalColumn: "Id",
@@ -52,7 +52,7 @@ namespace ArqNetCore.Migrations
                 values: new object[] { 3, "Medicamentos" });
 
             migrationBuilder.InsertData(
-                table: "OrganizationSupplyType",
+                table: "OrganizationSupplyTypes",
                 columns: new[] { "SupplyTypeId", "OrganizationId" },
                 values: new object[,]
                 {
@@ -64,15 +64,15 @@ namespace ArqNetCore.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrganizationSupplyType_OrganizationId",
-                table: "OrganizationSupplyType",
+                name: "IX_OrganizationSupplyTypes_OrganizationId",
+                table: "OrganizationSupplyTypes",
                 column: "OrganizationId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "OrganizationSupplyType");
+                name: "OrganizationSupplyTypes");
 
             migrationBuilder.DeleteData(
                 table: "Organizations",
