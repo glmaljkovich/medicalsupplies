@@ -1,6 +1,6 @@
 namespace ArqNetCore.DTOs.User
 {
-    public class UserSignUpDTO
+    public class UserProfileResultDTO
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -9,6 +9,6 @@ namespace ArqNetCore.DTOs.User
         public string Position { get; set; }
         public string Locality { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+
     }
 }

@@ -33,7 +33,7 @@ namespace ArqNetCore.Services
                 Name = organization.Name
             });
             return new OrganizationListResultDTO{
-                items = items
+                Items = items
             };
         }
         

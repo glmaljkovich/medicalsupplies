@@ -39,7 +39,7 @@ namespace ArqNetCore.Controllers
             OrganizationListResultDTO organizationListResultDTO = _iOrganizationService.List();
             OrganizationListResponseDTO organizationListResponseDTO = new OrganizationListResponseDTO
             {
-                Items = organizationListResultDTO.items.Select(
+                Items = organizationListResultDTO.Items.Select(
                     (OrganizationListItemResultDTO organizationListItemResultDTO) => 
                     {
                         return new OrganizationListItemResponseDTO

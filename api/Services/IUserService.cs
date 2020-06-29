@@ -8,6 +8,8 @@ namespace ArqNetCore.Services
 
         UserSignInResultDTO UserSignIn(UserSignInDTO userSignInDTO);
 
+        UserProfileResultDTO UserProfile();
+
         UserAuthContextDTO UserAuthContext();
         
     }

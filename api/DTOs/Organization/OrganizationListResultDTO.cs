@@ -5,7 +5,7 @@ namespace ArqNetCore.DTOs.Organization
 {
     public class OrganizationListResultDTO
     {
-        public IEnumerable<OrganizationListItemResultDTO> items { get; set; }
+        public IEnumerable<OrganizationListItemResultDTO> Items { get; set; }
 
     }
 

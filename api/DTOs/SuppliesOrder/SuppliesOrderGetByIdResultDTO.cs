@@ -11,6 +11,6 @@ namespace ArqNetCore.DTOs.SuppliesOrder
         public string SupplyType { get; set; }
         public string InformerId { get; set; }
         public string Status { get; set; }
-        public IDictionary<string, string> Attributes { get; set; }
+        public IDictionary<string, string> SupplyAttributes { get; set; }
     }
 }

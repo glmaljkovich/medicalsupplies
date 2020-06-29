@@ -5,7 +5,7 @@ namespace ArqNetCore.DTOs.SuppliesOrder
 {
     public class SuppliesOrderListResultDTO
     {
-        public IEnumerable<SuppliesOrderListItemResultDTO> items { get; set; }
+        public IEnumerable<SuppliesOrderListItemResultDTO> Items { get; set; }
 
     }
 

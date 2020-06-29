@@ -35,6 +35,23 @@ namespace ArqNetCore.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+
+        public UserProfileResultDTO UserProfile(){
+            ClaimsPrincipal claimsPrincipal = _httpContextAccessor.HttpContext.User;
+            Claim idClaim = claimsPrincipal.FindFirst(ClaimType.ID);
+            User user = _dbContext.Users.Find(idClaim.Value);
+            return new UserProfileResultDTO
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Phone = user.Phone,
+                Company = user.Company,
+                Position = user.Position,
+                Locality = user.Locality,
+                Email = user.Email
+            };
+        }
+
         public UserSignUpResultDTO UserSignUp(UserSignUpDTO userSignUpDTO)
         {
             _logger.LogInformation("UserSignUp email:" + userSignUpDTO.Email);
@@ -47,7 +64,13 @@ namespace ArqNetCore.Services
             };
             _dbContext.Accounts.Add(account);
             User user = new User{
-                Account = account
+                Account = account,
+                FirstName = userSignUpDTO.FirstName,
+                LastName = userSignUpDTO.LastName,
+                Phone = userSignUpDTO.Phone,
+                Company = userSignUpDTO.Company,
+                Position = userSignUpDTO.Position,
+                Locality = userSignUpDTO.Locality,
             };
             _dbContext.Users.Add(user);
             _dbContext.SaveChanges();

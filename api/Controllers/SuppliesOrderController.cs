@@ -38,7 +38,7 @@ namespace ArqNetCore.Controllers
             SuppliesOrderCreateDTO suppliesOrderCreateDTO = new SuppliesOrderCreateDTO
             {
                 SupplyType = suppliesOrderCreateRequestDTO.Supply_type,
-                SupplyAttributes = _map(suppliesOrderCreateRequestDTO.Supply_attributes),
+                SupplyAttributes = suppliesOrderCreateRequestDTO.Supply_attributes,
                 AreaId = suppliesOrderCreateRequestDTO.Area_id
             };
             SuppliesOrderCreateResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.Create(suppliesOrderCreateDTO);
@@ -49,20 +49,6 @@ namespace ArqNetCore.Controllers
             return suppliesOrderCreateResponseDTO;
         }
         
-        private IEnumerable<SuppliesOrderCreateAttributeDTO> _map(IEnumerable<Supply_attributes> suppliesOrderCreateRequestDTOs){
-            if(suppliesOrderCreateRequestDTOs == null){
-                return new List<SuppliesOrderCreateAttributeDTO>();
-            }
-            return suppliesOrderCreateRequestDTOs.Select((Supply_attributes supplyAttributes) => 
-            {
-                return new SuppliesOrderCreateAttributeDTO
-                {
-                    SupplyAttributeName = supplyAttributes.Name,
-                    SupplyAttributeValue = supplyAttributes.Value
-                };
-            });
-        }
-
         [Authorize]
         [HttpGet]
         [Route("")]
@@ -72,7 +58,7 @@ namespace ArqNetCore.Controllers
             SuppliesOrderListResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.List();
             SuppliesOrderListResponseDTO suppliesOrderCreateResponseDTO = new SuppliesOrderListResponseDTO
             {
-                Items = suppliesOrderCreateResultDTO.items.Select(
+                Items = suppliesOrderCreateResultDTO.Items.Select(
                     (SuppliesOrderListItemResultDTO suppliesOrderListItemResultDTO) => {
                     return new SuppliesOrderListItemResponseDTO
                     {
@@ -91,6 +77,25 @@ namespace ArqNetCore.Controllers
 
         [Authorize]
         [HttpGet]
+        [Route("supply-types")]
+        public SuppliesOrderSupplyTypesResponseDTO SupplyTypes()
+        {
+            SuppliesOrderSupplyTypesResultDTO suppliesOrderSupplyTypesResultDTO = _iSuppliesOrderService.SupplyTypes();
+            SuppliesOrderSupplyTypesResponseDTO suppliesOrderSupplyTypesResponseDTO = new SuppliesOrderSupplyTypesResponseDTO
+            {
+                Items = suppliesOrderSupplyTypesResultDTO.Items
+                .Select((SuppliesOrderSupplyTypesItemResultDTO suppliesOrderSupplyTypesItemResultDTO) => new SuppliesOrderSupplyTypesItemResponseDTO
+                {
+                    Id = suppliesOrderSupplyTypesItemResultDTO.Id,
+                    Description = suppliesOrderSupplyTypesItemResultDTO.Description,
+                    Supply_attributes = suppliesOrderSupplyTypesItemResultDTO.SupplyAttributes
+                }).ToList()
+            };
+            return suppliesOrderSupplyTypesResponseDTO;
+        }
+
+        [Authorize]
+        [HttpGet]
         [Route("{id}")]
         public SuppliesOrderGetByIdResponseDTO GetById(int id)
         { 
@@ -104,7 +109,7 @@ namespace ArqNetCore.Controllers
                 Informer_id = suppliesOrderGetByIdResultDTO.InformerId,
                 Organization_id = suppliesOrderGetByIdResultDTO.OrganizationId,
                 Organization_name = suppliesOrderGetByIdResultDTO.OrganizationName,
-                Attributes = suppliesOrderGetByIdResultDTO.Attributes
+                Supply_attributes = suppliesOrderGetByIdResultDTO.SupplyAttributes
             };
             return suppliesOrderGetByIdResponseDTO;
         }

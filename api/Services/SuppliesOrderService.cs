@@ -43,7 +43,7 @@ namespace ArqNetCore.Services
                 InformerId = supply.SuppliesOrder.AccountId,
                 OrganizationId = supply.SuppliesOrder.OrganizationId,
                 OrganizationName = supply.SuppliesOrder.Organization != null ? supply.SuppliesOrder.Organization.Name : null,
-                Attributes = _dbContext.SupplyAttributes
+                SupplyAttributes = _dbContext.SupplyAttributes
                 .Where((SupplyAttribute supplyAttribute) => supplyAttribute.Supply == supply)
                 .ToDictionary(
                     (SupplyAttribute supplyAttribute) => supplyAttribute.AttributeName,
@@ -79,18 +79,18 @@ namespace ArqNetCore.Services
                 SuppliesOrder = suppliesOrder
             };
 
-            IEnumerable<SuppliesOrderCreateAttributeDTO> suppliesOrderCreateAttributeDTOs = supplyOrderCreateDTO.SupplyAttributes;
-            foreach (SuppliesOrderCreateAttributeDTO suppliesOrderCreateAttributeDTO in suppliesOrderCreateAttributeDTOs)
+            IDictionary<string, string> suppliesOrderCreateAttributeDTOs = supplyOrderCreateDTO.SupplyAttributes;
+            foreach (KeyValuePair<string, string> suppliesOrderCreateAttributeDTO in suppliesOrderCreateAttributeDTOs)
             {
                 // SupplyAttribute  * -> Supply              * -> SupplyType
                 //                  * -> SupplyTypeAttribute * -> SupplyType
-                string attributeName = suppliesOrderCreateAttributeDTO.SupplyAttributeName;
+                string attributeName = suppliesOrderCreateAttributeDTO.Key;
                 SupplyTypeAttribute supplyTypeAttribute = supplyTypeAttributes.Find(supplyType.Id, attributeName);
                 //TODO verify not null supplyTypeAttribute
                 SupplyAttribute supplyAttribute = new SupplyAttribute{
                     Supply = supply,
                     AttributeName = attributeName,
-                    AttributeValue = suppliesOrderCreateAttributeDTO.SupplyAttributeValue
+                    AttributeValue = suppliesOrderCreateAttributeDTO.Value
                 };
                 supplyAttributes.Add(supplyAttribute);
             }
@@ -116,10 +116,52 @@ namespace ArqNetCore.Services
                 OrganizationName = supply.SuppliesOrder.Organization != null ? supply.SuppliesOrder.Organization.Name : null
             });
             return new SuppliesOrderListResultDTO{
-                items = items
+                Items = items
             };
         }
 
+
+        // var res = ctx.Parents.Select(
+        //   p => new Dictionary<int, int>(
+        //     p.Children.Select(
+        //       c => new KeyValuePair<int, int>(
+        //         c.Id, 
+        //         c.ParentId
+        //       )
+        //     )
+        //   )
+        // ).ToArray();
+
+        // var res = ctx.Parents.Select(
+        //   p => p.Children.ToDictionary(
+        //     c => c.Id, 
+        //     c => c.ParentId
+        //   )
+        // ).ToArray();
+        public SuppliesOrderSupplyTypesResultDTO SupplyTypes()
+        {
+            return new SuppliesOrderSupplyTypesResultDTO
+            {
+                Items = _dbContext.SupplyTypes
+                .Select((SupplyType supplyType)=> new SuppliesOrderSupplyTypesItemResultDTO
+                {
+                    Id = supplyType.Id,
+                    Description = supplyType.Description,
+                    SupplyAttributes = new Dictionary<string, string>(
+                        _dbContext.SupplyTypeAttributes
+                        .Where((SupplyTypeAttribute supplyTypeAttribute) => supplyTypeAttribute.SupplyType == supplyType)
+                        .Select((SupplyTypeAttribute supplyTypeAttribute) => new KeyValuePair<string, string>(
+                            supplyTypeAttribute.AttributeName,
+                            supplyTypeAttribute.AttributeDescription
+                        ))
+                    )
+                    // .ToDictionary(
+                    //     (SupplyTypeAttribute supplyTypeAttribute) => supplyTypeAttribute.AttributeName,
+                    //     (SupplyTypeAttribute supplyTypeAttribute) => supplyTypeAttribute.AttributeDescription
+                    // )
+                })
+            };
+        }
         public SuppliesOrderAcceptResultDTO Accept(SuppliesOrderAcceptDTO suppliesOrderAcceptDTO){
             DbSet<SuppliesOrder> suppliesOrders = _dbContext.SuppliesOrders;
             DbSet<Organization> organizations = _dbContext.Organizations;

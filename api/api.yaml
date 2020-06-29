@@ -91,6 +91,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserRefreshResponseDTO'
+  /user/profile:
+    get:
+      tags:
+      - "user"
+      summary: "user profile data"
+      description: ""
+      operationId: "userProfile"
+      security: 
+        - bearerJWT: []
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponseDTO'
   /supplies-order:
     post:
       tags:
@@ -165,6 +183,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuppliesOrderGetByIdResponseDTO'
+  /supplies-order/supply-types:
+    get:
+      tags:
+      - "supplies"
+      summary: "available supply types"
+      description: ""
+      operationId: "suppliesOrderSupplyTypes"
+      security: 
+        - bearerJWT: []
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppliesOrderSupplyTypesResponseDTO'
   /supplies-order/accept:
     post:
       tags:
@@ -256,9 +292,7 @@ components:
     bearerJWT:
       type: http
       scheme: bearer
-      bearerFormat: JWT
-      in: header
-        
+      bearerFormat: JWT        
   schemas:
     UserSignUpRequestDTO:
       type: "object"
@@ -266,7 +300,9 @@ components:
         - email
         - password
       properties:
-        name:
+        first_name:
+          type: "string"
+        last_name:
           type: "string"
         phone:
           type: "string"
@@ -281,7 +317,7 @@ components:
         password:
           type: "string"
       xml:
-        name: "User"
+        name: "data"
     UserSignUpResponseDTO:
       type: "object"
       properties:
@@ -289,7 +325,7 @@ components:
           type: "integer"
           format: "int32"
       xml:
-        name: "user"
+        name: "data"
     UserSignInRequestDTO:
       type: "object"
       required: 
@@ -301,7 +337,7 @@ components:
         password:
           type: "string"
       xml:
-        name: "user"
+        name: "data"
     UserSignInResponseDTO:
       type: "object"
       properties:
@@ -315,7 +351,7 @@ components:
         refresh_token:
           type: "string"
       xml:
-        name: "user"
+        name: "data"
     UserRefreshRequestDTO:
       type: "object"
       properties:
@@ -324,14 +360,33 @@ components:
         password:
           type: "string"
       xml:
-        name: "user"
+        name: "data"
     UserRefreshResponseDTO:
       type: "object"
       properties:
         token:
           type: "string"
       xml:
-        name: "user"
+        name: "data"
+    UserProfileResponseDTO:
+      type: "object"
+      properties:
+        first_name:
+          type: "string"
+        last_name:
+          type: "string"
+        phone:
+          type: "string"
+        company:
+          type: "string"
+        position:
+          type: "string"
+        locality:
+          type: "string"
+        email:
+          type: "string"
+      xml:
+        name: "data"
     SuppliesOrderCreateRequestDTO:
       type: "object"
       required: 
@@ -341,18 +396,13 @@ components:
         supply_type:
           type: "string"
         supply_attributes:
-          type: "array"
-          items: 
-            type: "object"
-            properties:
-              name:  
-                type: "string"
-              value:  
-               type: "string"
+          type: "object"
+          additionalProperties:
+            type: string
         area_id:
           type: "string"
       xml:
-        name: "supplies-order"
+        name: "data"
     SuppliesOrderCreateResponseDTO:
       type: "object"
       properties:
@@ -360,7 +410,7 @@ components:
           type: "integer"
           format: "int32"
       xml:
-        name: "supplies-order"
+        name: "data"
     SuppliesOrderListResponseDTO:
       type: "object"
       properties:
@@ -369,7 +419,7 @@ components:
           items:
             $ref: '#/components/schemas/SuppliesOrderListItemResponseDTO'
       xml:
-        name: "supplies-order-list"
+        name: "data"
     SuppliesOrderListItemResponseDTO:
       type: "object"
       properties:
@@ -392,6 +442,8 @@ components:
         informer_id:
           type: "string"
           nullable: true
+      xml:
+        name: "data"
     OrganizationListResponseDTO:
       type: "object"
       properties:
@@ -400,7 +452,7 @@ components:
           items:
             $ref: '#/components/schemas/OrganizationListItemResponseDTO'
       xml:
-        name: "organization-list"
+        name: "data"
     OrganizationListItemResponseDTO:
       type: "object"
       properties:
@@ -410,7 +462,7 @@ components:
         name:
           type: "string"
       xml:
-        name: "organization"
+        name: "data"
     SuppliesOrderGetByIdResponseDTO:
       type: "object"
       properties:
@@ -433,14 +485,34 @@ components:
         informer_id:
           type: "string"
           nullable: true
-        area_id:
-          type: "string"
-        attributes:
+        supply_attributes:
           type: "object"
           additionalProperties:
             type: string
       xml:
         name: "supplies-order"
+    SuppliesOrderSupplyTypesResponseDTO:
+      type: "object"
+      properties:
+        items:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/SuppliesOrderSupplyTypesItemResponseDTO'
+      xml:
+        name: "data"
+    SuppliesOrderSupplyTypesItemResponseDTO:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        description:
+          type: "string"
+        supply_attributes:
+          type: "object"
+          additionalProperties:
+            type: string
+      xml:
+        name: "data" 
     SuppliesOrderAcceptRequestDTO:
       type: "object"
       properties:
@@ -450,16 +522,24 @@ components:
         organization_id:
           type: "integer"
           format: "int32"
+      xml:
+        name: "data"
     SuppliesOrderAcceptResponseDTO:
       type: "object"
+      xml:
+        name: "data"
     SuppliesOrderRejectRequestDTO:
       type: "object"
       properties:
         supplies_order_id:
           type: "integer"
           format: "int32"
+      xml:
+        name: "data"
     SuppliesOrderRejectResponseDTO:
       type: "object"
+      xml:
+        name: "data"
     OrganizationGroupBySupplyTypeResponseDTO:
       type: "object"
       properties:
@@ -467,6 +547,8 @@ components:
           type: "array"
           items: 
             $ref: '#/components/schemas/OrganizationGroupBySupplyTypeItemResponseDTO'
+      xml:
+        name: "data"
     OrganizationGroupBySupplyTypeItemResponseDTO:
       type: "object"
       properties:
@@ -476,6 +558,8 @@ components:
           type: "array"
           items: 
             $ref: '#/components/schemas/OrganizationGroupBySupplyTypeItemOrganizationsResponseDTO'
+      xml:
+        name: "data"
     OrganizationGroupBySupplyTypeItemOrganizationsResponseDTO:
       type: "object"
       properties:
@@ -484,3 +568,5 @@ components:
           format: "int32"
         organization_name:
           type: "string"
+      xml:
+        name: "data"

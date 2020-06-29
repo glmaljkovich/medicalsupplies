@@ -41,7 +41,16 @@ namespace ArqNetCore.Controllers
         public UserSignUpResponseDTO UserSignUp(UserSignUpRequestDTO userSignUpRequestDTO)
         { 
             _logger.LogInformation("UserSignUp email:" + userSignUpRequestDTO.Email);
-            UserSignUpDTO userSignUpDTO = _mapper.Map<UserSignUpDTO>(userSignUpRequestDTO);
+            UserSignUpDTO userSignUpDTO = new UserSignUpDTO{
+                FirstName = userSignUpRequestDTO.First_name,
+                LastName = userSignUpRequestDTO.Last_name,
+                Phone = userSignUpRequestDTO.Phone,
+                Company = userSignUpRequestDTO.Company,
+                Position = userSignUpRequestDTO.Position,
+                Locality = userSignUpRequestDTO.Locality,
+                Email = userSignUpRequestDTO.Email,
+                Password = userSignUpRequestDTO.Password
+            };
             UserSignUpResultDTO userSignUpResultDTO = _userService.UserSignUp(userSignUpDTO);
             UserSignUpResponseDTO userSignUpResponseDTO = _mapper.Map<UserSignUpResponseDTO>(userSignUpResultDTO);
             return userSignUpResponseDTO;
@@ -57,6 +66,24 @@ namespace ArqNetCore.Controllers
             UserSignInResultDTO userSignInResultDTO = _userService.UserSignIn(userSignInDTO);
             return new UserSignInResponseDTO{
                 Access_token = userSignInResultDTO.Token
+            };
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("profile")]
+        public UserProfileResponseDTO UserProfile()
+        { 
+            _logger.LogInformation("UserProfile");
+            UserProfileResultDTO userSignInResultDTO = _userService.UserProfile();
+            return new UserProfileResponseDTO{
+                First_name = userSignInResultDTO.FirstName,
+                Last_name = userSignInResultDTO.LastName,
+                Phone = userSignInResultDTO.Phone,
+                Company = userSignInResultDTO.Company,
+                Position = userSignInResultDTO.Position,
+                Locality = userSignInResultDTO.Locality,
+                Email = userSignInResultDTO.Email
             };
         }
     }
