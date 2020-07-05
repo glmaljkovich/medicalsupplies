@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using ArqNetCore.Services;
 using ArqNetCore.DTOs.SuppliesOrder;
-
+using System.Collections.Generic;
 namespace ArqNetCore.Controllers
 {
     [Authorize]
@@ -51,14 +51,12 @@ namespace ArqNetCore.Controllers
         [Authorize]
         [HttpGet]
         [Route("")]
-        public SuppliesOrderListResponseDTO List()
+        public SuppliesOrderListResponseDTO List([FromQuery(Name = "informer_id")] string informer_id)
         { 
             _logger.LogInformation("List supplies orders:");
             SuppliesOrderListResultDTO suppliesOrderListResultDTO = _iSuppliesOrderService.List();
-            SuppliesOrderListResponseDTO suppliesOrderListResponseDTO = new SuppliesOrderListResponseDTO
-            {
-                Items = suppliesOrderListResultDTO.Items.Select(
-                    (SuppliesOrderListItemResultDTO suppliesOrderListItemResultDTO) => {
+            List<SuppliesOrderListItemResponseDTO> FilteredItems = suppliesOrderListResultDTO.Items.Select(
+                (SuppliesOrderListItemResultDTO suppliesOrderListItemResultDTO) => {
                     return new SuppliesOrderListItemResponseDTO
                     {
                         Id = suppliesOrderListItemResultDTO.Id,
@@ -69,7 +67,13 @@ namespace ArqNetCore.Controllers
                         Organization_name = suppliesOrderListItemResultDTO.OrganizationName,
                         Area_id = suppliesOrderListItemResultDTO.AreaId
                     };
-                }).ToList()
+                }).ToList();
+                if (informer_id != null) {
+                    FilteredItems = FilteredItems.FindAll((SuppliesOrderListItemResponseDTO item) => item.Informer_id == informer_id);
+                }
+            SuppliesOrderListResponseDTO suppliesOrderListResponseDTO = new SuppliesOrderListResponseDTO
+            {
+                Items = FilteredItems
             };
             return suppliesOrderListResponseDTO;
         }
