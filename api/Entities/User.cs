@@ -20,6 +20,8 @@ namespace ArqNetCore.Entities
         
         public string Locality { get; set; }
 
+        public bool IsAdmin { get; set;}
+
         [ForeignKey("Email")]
         public virtual Account Account { get; set; }
     }

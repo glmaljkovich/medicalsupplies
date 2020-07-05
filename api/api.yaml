@@ -405,6 +405,8 @@ components:
           type: "string"
         email:
           type: "string"
+        is_admin:
+          type: "boolean"
       xml:
         name: "data"
     AreaListResponseDTO:

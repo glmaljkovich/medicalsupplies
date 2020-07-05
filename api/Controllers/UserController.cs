@@ -83,7 +83,8 @@ namespace ArqNetCore.Controllers
                 Company = userSignInResultDTO.Company,
                 Position = userSignInResultDTO.Position,
                 Locality = userSignInResultDTO.Locality,
-                Email = userSignInResultDTO.Email
+                Email = userSignInResultDTO.Email,
+                Is_admin = userSignInResultDTO.IsAdmin
             };
         }
     }

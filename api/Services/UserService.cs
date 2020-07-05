@@ -7,6 +7,7 @@ using ArqNetCore.DTOs.Auth;
 using ArqNetCore.DTOs.Account;
 using ArqNetCore.Entities;
 using ArqNetCore.Configuration;
+using ArqNetCore.Exceptions;
 
 namespace ArqNetCore.Services
 {
@@ -48,13 +49,22 @@ namespace ArqNetCore.Services
                 Company = user.Company,
                 Position = user.Position,
                 Locality = user.Locality,
-                Email = user.Email
+                Email = user.Email,
+                IsAdmin = user.IsAdmin
             };
         }
 
         public UserSignUpResultDTO UserSignUp(UserSignUpDTO userSignUpDTO)
         {
             _logger.LogInformation("UserSignUp email:" + userSignUpDTO.Email);
+            try
+            {
+                AccountFindResultDTO accountFindResultDTO = _accountService.Find(userSignUpDTO.Email);
+                throw new AccountAlreadyExistsException();
+            }
+            catch (System.NullReferenceException)
+            {
+            }
             string passwordRaw = userSignUpDTO.Password;
             AuthHashResultDTO authHashResultDTO = _authService.Hash(passwordRaw);
             Account account = new Account{
