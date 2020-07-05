@@ -170,6 +170,7 @@ namespace ArqNetCore.Services
             suppliesOrder.Status = SuppliesOrderStatus.ACCEPTED;
             suppliesOrder.Organization = organization;
             suppliesOrders.Update(suppliesOrder);
+            _dbContext.SaveChanges();
             return new SuppliesOrderAcceptResultDTO{ };
         }
 
@@ -178,6 +179,7 @@ namespace ArqNetCore.Services
             SuppliesOrder suppliesOrder = suppliesOrders.Find(suppliesOrderRejectDTO.SuppliesOrderId);
             suppliesOrder.Status = SuppliesOrderStatus.REJECTED;
             suppliesOrders.Update(suppliesOrder);
+            _dbContext.SaveChanges();
             return new SuppliesOrderRejectResultDTO{ };
         }
     }
