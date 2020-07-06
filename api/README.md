@@ -5,6 +5,7 @@ http://<api-host>:<api-port>/swagger
 
 #### Installation
 - Create a database in **MySQL** server and provide access to user
+
   ``` sql
   CREATE DATABASE dbnetcore;
   CREATE USER 'netcoreuser'@'%' IDENTIFIED BY 'netcorepass';
