@@ -36,6 +36,7 @@ http://<api-host>:<api-port>/swagger
   $ export PATH="$PATH:/home/principal/.dotnet/tools"
   ```
 - Install dependencies
+
   ```bash
   $ dotnet restore
   ```
