@@ -13,6 +13,7 @@ http://<api-host>:<api-port>/swagger
   FLUSH PRIVILEGES;
   ```
 - Create initial Schema
+
   ```sql
   CREATE TABLE `__EFMigrationsHistory` 
   ( 
