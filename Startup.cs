@@ -39,7 +39,7 @@ namespace ArqNetCore
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000")
+                        builder.WithOrigins("http://localhost:3000", "https://medicalsupplies-back.herokuapp.com")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
