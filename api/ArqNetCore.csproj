@@ -29,6 +29,7 @@
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4" />
   </ItemGroup>
   <Target Name="PrePublishTarget" AfterTargets="Publish">
+    <Exec Command="dotnet tool restore" />
     <Exec Command="dotnet ef database update" />
   </Target>
 </Project>
