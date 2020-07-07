@@ -12,6 +12,8 @@ namespace ArqNetCore.Services
 
         SuppliesOrderGetByIdResultDTO GetById(int id);
 
+        SuppliesOrderRemoveResultDTO Remove(int id);
+
         SuppliesOrderAcceptResultDTO Accept(SuppliesOrderAcceptDTO suppliesOrderAcceptDTO);
 
         SuppliesOrderRejectResultDTO Reject(SuppliesOrderRejectDTO suppliesOrderRejectDTO);

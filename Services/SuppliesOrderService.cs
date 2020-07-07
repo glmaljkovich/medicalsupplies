@@ -51,6 +51,25 @@ namespace ArqNetCore.Services
                 )
             };
         }
+        public SuppliesOrderRemoveResultDTO Remove(int id){
+            DbSet<SuppliesOrder> suppliesOrders = _dbContext.SuppliesOrders;
+            SuppliesOrder suppliesOrder = suppliesOrders.Find(id);
+            if(suppliesOrder.OrganizationId != null){
+                //TODO remplace by custom exception
+                throw new Exception("OrderAlreadyBoundToOrganization");
+            }
+            UserAuthContextDTO userAuthContextDTO = _iUserService.UserAuthContext();
+            if(suppliesOrder.AccountId != userAuthContextDTO.Id){
+                //TODO remplace by custom exception
+                throw new Exception("LoggingUserIsNotSuppliesOrderInformer");
+            }
+            suppliesOrders.Remove(suppliesOrder);
+            _dbContext.SaveChanges();
+            return new SuppliesOrderRemoveResultDTO
+            {
+                Id = suppliesOrder.Id
+            };
+        }
 
         public SuppliesOrderCreateResultDTO Create(SuppliesOrderCreateDTO supplyOrderCreateDTO){
             DbSet<SupplyType>          supplyTypes          = _dbContext.SupplyTypes;

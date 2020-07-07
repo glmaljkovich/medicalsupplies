@@ -116,6 +116,21 @@ namespace ArqNetCore.Controllers
             };
             return suppliesOrderGetByIdResponseDTO;
         }
+
+        [Authorize]
+        [HttpDelete]
+        [Route("{id}")]
+        public SuppliesOrderRemoveResponseDTO Remove(int id)
+        { 
+            _logger.LogInformation("accept supplies order");
+            SuppliesOrderRemoveResultDTO suppliesOrderGetByIdResultDTO = _iSuppliesOrderService.Remove(id);
+            SuppliesOrderRemoveResponseDTO suppliesOrderGetByIdResponseDTO = new SuppliesOrderRemoveResponseDTO{ 
+                Id = suppliesOrderGetByIdResultDTO.Id
+            };
+            return suppliesOrderGetByIdResponseDTO;
+        }   
+
+
         [Authorize]
         [HttpPost]
         [Route("accept")]

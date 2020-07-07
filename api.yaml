@@ -135,7 +135,7 @@ paths:
       - "supplies"
       summary: "create supplies order"
       description: ""
-      operationId: "supplyCreate"
+      operationId: "suppliesOrderCreate"
       security: 
         - bearerJWT: []
       requestBody:
@@ -159,7 +159,7 @@ paths:
       - "supplies"
       summary: "list supplies orders"
       description: ""
-      operationId: "supplyList"
+      operationId: "suppliesOrderList"
       security: 
         - bearerJWT: []
       parameters: 
@@ -184,7 +184,7 @@ paths:
       - "supplies"
       summary: "get supplies order by id"
       description: ""
-      operationId: "supplyGetById"
+      operationId: "suppliesOrderGetById"
       security: 
         - bearerJWT: []
       parameters: 
@@ -203,6 +203,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuppliesOrderGetByIdResponseDTO'
+    delete:
+      tags:
+      - "supplies"
+      summary: "remove supplies order by id if it has not related organization, logged used must be the owner"
+      description: ""
+      operationId: "suppliesOrderRemove"
+      security: 
+        - bearerJWT: []
+      parameters: 
+      - name: suppliesOrderId
+        in: path
+        description: ID of order
+        required: true
+        schema:
+          type: string
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppliesOrderRemoveResponseDTO'
   /supplies-order/supply-types:
     get:
       tags:
@@ -442,6 +466,14 @@ components:
       xml:
         name: "data"
     SuppliesOrderCreateResponseDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+      xml:
+        name: "data"
+    SuppliesOrderRemoveResponseDTO:
       type: "object"
       properties:
         id:
