@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.FileProviders;
 using AutoMapper;
-using MySql.Data.EntityFrameworkCore.Infrastructure;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using ArqNetCore.Configuration;
 using ArqNetCore.Services;
 using NSwag.AspNetCore;
@@ -75,19 +75,25 @@ namespace ArqNetCore
                 DB_PASSWORD = "";
             }
             string password = DB_PASSWORD;
-            Console.WriteLine("probando console" + DB_NAME);
+            Console.WriteLine("probando console " + DB_NAME);
             services.AddDbContext<ArqNetCoreDbContext>(
                 (DbContextOptionsBuilder options) => 
                 {
-                    options.UseMySQL(
-                        $"server={server};port={port};database={database};user={user};password={password}", 
-                        (MySQLDbContextOptionsBuilder builder) => 
-                        {
-                            builder.ExecutionStrategy(context => {
-                                return new ArqNetDbExecutionStrategy(context);
-                        });
-                });
-            });
+                    // options.UseMySQL(
+                    //     $"server={server};port={port};database={database};user={user};password={password}", 
+                    //     (MySQLDbContextOptionsBuilder builder) => 
+                    //     {
+                    //         builder.ExecutionStrategy(context => 
+                    //         {
+                    //             return new ArqNetDbExecutionStrategy(context);
+                    //         });
+                    //     }
+                    // );
+                    string connectionString = $"Host={server};Database={database};Username={user};Password={password}";
+                    Console.WriteLine(connectionString);
+                    options.UseNpgsql(connectionString);
+                }
+            );
             services.AddHttpClient();
             services.AddControllers();
             services.AddSwaggerDocument();

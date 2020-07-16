@@ -1,12 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using MySql.Data.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ArqNetCore.Migrations
 {
-    public partial class SuppliesOrders : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    PasswordHash = table.Column<byte[]>(nullable: true),
+                    PasswordSalt = table.Column<byte[]>(nullable: true),
+                    Enable = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Areas",
                 columns: table => new
@@ -24,7 +39,7 @@ namespace ArqNetCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -45,14 +60,39 @@ namespace ArqNetCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Email = table.Column<string>(nullable: false),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Company = table.Column<string>(nullable: true),
+                    Position = table.Column<string>(nullable: true),
+                    Locality = table.Column<string>(nullable: true),
+                    IsAdmin = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Email);
+                    table.ForeignKey(
+                        name: "FK_Users_Accounts_Email",
+                        column: x => x.Email,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SuppliesOrders",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     AccountId = table.Column<string>(nullable: true),
                     AreaId = table.Column<string>(maxLength: 32, nullable: true),
-                    OrganizationId = table.Column<int>(nullable: true)
+                    OrganizationId = table.Column<int>(nullable: true),
+                    Status = table.Column<string>(maxLength: 32, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -75,6 +115,30 @@ namespace ArqNetCore.Migrations
                         principalTable: "Organizations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrganizationSupplyTypes",
+                columns: table => new
+                {
+                    OrganizationId = table.Column<int>(nullable: false),
+                    SupplyTypeId = table.Column<string>(maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganizationSupplyTypes", x => new { x.SupplyTypeId, x.OrganizationId });
+                    table.ForeignKey(
+                        name: "FK_OrganizationSupplyTypes_Organizations_OrganizationId",
+                        column: x => x.OrganizationId,
+                        principalTable: "Organizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrganizationSupplyTypes_SupplyTypes_SupplyTypeId",
+                        column: x => x.SupplyTypeId,
+                        principalTable: "SupplyTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -101,7 +165,7 @@ namespace ArqNetCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SupplyTypeId = table.Column<string>(nullable: true),
                     SuppliesOrderId = table.Column<int>(nullable: false)
                 },
@@ -141,6 +205,60 @@ namespace ArqNetCore.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Areas",
+                columns: new[] { "Name", "Description" },
+                values: new object[,]
+                {
+                    { "ATENCION_A_PACIENTES", "Atención de pacientes" },
+                    { "TERAPIA_INTENSIVA", "Terapia Intensiva" },
+                    { "TECNICOS", "Técnicos" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Organizations",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Insumos Basicos" },
+                    { 2, "Insumos mecanicos" },
+                    { 3, "Medicamentos" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SupplyTypes",
+                columns: new[] { "Id", "Description" },
+                values: new object[,]
+                {
+                    { "MASCARA_PROTECTORA", "Máscara protectora" },
+                    { "BARBIJO", "Barbijo" },
+                    { "RESPIRADOR", "Respirador" },
+                    { "GUANTE", "Guante" },
+                    { "MEDICAMENTO", "Medicamento" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "OrganizationSupplyTypes",
+                columns: new[] { "SupplyTypeId", "OrganizationId" },
+                values: new object[,]
+                {
+                    { "MASCARA_PROTECTORA", 1 },
+                    { "BARBIJO", 1 },
+                    { "RESPIRADOR", 2 },
+                    { "GUANTE", 1 },
+                    { "MEDICAMENTO", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SupplyTypeAttributes",
+                columns: new[] { "SupplyTypeId", "AttributeName", "AttributeDescription" },
+                values: new object[] { "MEDICAMENTO", "TIPO_MEDICAMENTO", "Tipo de medicamento" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrganizationSupplyTypes_OrganizationId",
+                table: "OrganizationSupplyTypes",
+                column: "OrganizationId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Supplies_SuppliesOrderId",
                 table: "Supplies",
@@ -170,10 +288,16 @@ namespace ArqNetCore.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "OrganizationSupplyTypes");
+
+            migrationBuilder.DropTable(
                 name: "SupplyAttributes");
 
             migrationBuilder.DropTable(
                 name: "SupplyTypeAttributes");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Supplies");
@@ -183,6 +307,9 @@ namespace ArqNetCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "SupplyTypes");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
 
             migrationBuilder.DropTable(
                 name: "Areas");

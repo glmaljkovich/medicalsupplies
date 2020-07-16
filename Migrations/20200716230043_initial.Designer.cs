@@ -5,33 +5,35 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ArqNetCore.Migrations
 {
     [DbContext(typeof(ArqNetCoreDbContext))]
-    [Migration("20200629044615_UserFullData")]
-    partial class UserFullData
+    [Migration("20200716230043_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.4")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("ArqNetCore.Entities.Account", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("Enable")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<byte[]>("PasswordHash")
-                        .HasColumnType("varbinary(4000)");
+                        .HasColumnType("bytea");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("varbinary(4000)");
+                        .HasColumnType("bytea");
 
                     b.HasKey("Id");
 
@@ -41,7 +43,7 @@ namespace ArqNetCore.Migrations
             modelBuilder.Entity("ArqNetCore.Entities.Area", b =>
                 {
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("character varying(32)")
                         .HasMaxLength(32);
 
                     b.Property<string>("Description")
@@ -73,7 +75,8 @@ namespace ArqNetCore.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -103,11 +106,11 @@ namespace ArqNetCore.Migrations
             modelBuilder.Entity("ArqNetCore.Entities.OrganizationSupplyType", b =>
                 {
                     b.Property<string>("SupplyTypeId")
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("character varying(32)")
                         .HasMaxLength(32);
 
                     b.Property<int>("OrganizationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("SupplyTypeId", "OrganizationId");
 
@@ -147,20 +150,21 @@ namespace ArqNetCore.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("AccountId")
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("text");
 
                     b.Property<string>("AreaId")
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("character varying(32)")
                         .HasMaxLength(32);
 
                     b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Status")
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("character varying(32)")
                         .HasMaxLength(32);
 
                     b.HasKey("Id");
@@ -178,13 +182,14 @@ namespace ArqNetCore.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<int>("SuppliesOrderId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SupplyTypeId")
-                        .HasColumnType("varchar(32)");
+                        .HasColumnType("character varying(32)");
 
                     b.HasKey("Id");
 
@@ -198,10 +203,10 @@ namespace ArqNetCore.Migrations
             modelBuilder.Entity("ArqNetCore.Entities.SupplyAttribute", b =>
                 {
                     b.Property<int>("SupplyId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("AttributeName")
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("character varying(32)")
                         .HasMaxLength(32);
 
                     b.Property<string>("AttributeValue")
@@ -215,7 +220,7 @@ namespace ArqNetCore.Migrations
             modelBuilder.Entity("ArqNetCore.Entities.SupplyType", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("character varying(32)")
                         .HasMaxLength(32);
 
                     b.Property<string>("Description")
@@ -256,11 +261,11 @@ namespace ArqNetCore.Migrations
             modelBuilder.Entity("ArqNetCore.Entities.SupplyTypeAttribute", b =>
                 {
                     b.Property<string>("SupplyTypeId")
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("character varying(32)")
                         .HasMaxLength(32);
 
                     b.Property<string>("AttributeName")
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("character varying(32)")
                         .HasMaxLength(32);
 
                     b.Property<string>("AttributeDescription")
@@ -282,13 +287,16 @@ namespace ArqNetCore.Migrations
             modelBuilder.Entity("ArqNetCore.Entities.User", b =>
                 {
                     b.Property<string>("Email")
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Company")
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .HasColumnType("text");
