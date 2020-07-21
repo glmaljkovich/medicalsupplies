@@ -41,6 +41,7 @@ namespace ArqNetCore.Services
                 AreaId = supply.SuppliesOrder.AreaId,
                 Status = supply.SuppliesOrder.Status,
                 InformerId = supply.SuppliesOrder.AccountId,
+                Note = supply.SuppliesOrder.Note,
                 OrganizationId = supply.SuppliesOrder.OrganizationId,
                 OrganizationName = supply.SuppliesOrder.Organization != null ? supply.SuppliesOrder.Organization.Name : null,
                 SupplyAttributes = _dbContext.SupplyAttributes
@@ -131,6 +132,7 @@ namespace ArqNetCore.Services
                 AreaId = supply.SuppliesOrder.AreaId,
                 Status = supply.SuppliesOrder.Status,
                 InformerId = supply.SuppliesOrder.AccountId,
+                Note = supply.SuppliesOrder.Note,
                 OrganizationId = supply.SuppliesOrder.OrganizationId,
                 OrganizationName = supply.SuppliesOrder.Organization != null ? supply.SuppliesOrder.Organization.Name : null
             });
@@ -197,6 +199,7 @@ namespace ArqNetCore.Services
             DbSet<SuppliesOrder> suppliesOrders = _dbContext.SuppliesOrders;
             SuppliesOrder suppliesOrder = suppliesOrders.Find(suppliesOrderRejectDTO.SuppliesOrderId);
             suppliesOrder.Status = SuppliesOrderStatus.REJECTED;
+            suppliesOrder.Note = suppliesOrderRejectDTO.Note;
             suppliesOrders.Update(suppliesOrder);
             _dbContext.SaveChanges();
             return new SuppliesOrderRejectResultDTO{ };

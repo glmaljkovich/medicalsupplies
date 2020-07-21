@@ -65,7 +65,8 @@ namespace ArqNetCore.Controllers
                         Status = suppliesOrderListItemResultDTO.Status,
                         Organization_id = suppliesOrderListItemResultDTO.OrganizationId,
                         Organization_name = suppliesOrderListItemResultDTO.OrganizationName,
-                        Area_id = suppliesOrderListItemResultDTO.AreaId
+                        Area_id = suppliesOrderListItemResultDTO.AreaId,
+                        Note = suppliesOrderListItemResultDTO.Note
                     };
                 }).ToList();
                 if (informer_id != null) {
@@ -153,7 +154,8 @@ namespace ArqNetCore.Controllers
         { 
             _logger.LogInformation("reject supplies order");
             SuppliesOrderRejectDTO suppliesOrderRejectDTO = new SuppliesOrderRejectDTO{
-                SuppliesOrderId = suppliesOrderRejectRequestDTO.Supplies_order_id
+                SuppliesOrderId = suppliesOrderRejectRequestDTO.Supplies_order_id,
+                Note = suppliesOrderRejectRequestDTO.Note
             };
             SuppliesOrderRejectResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.Reject(suppliesOrderRejectDTO);
             SuppliesOrderRejectResponseDTO suppliesOrderRejectResponseDTO = new SuppliesOrderRejectResponseDTO{ };

@@ -3,15 +3,17 @@ using System;
 using ArqNetCore.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ArqNetCore.Migrations
 {
     [DbContext(typeof(ArqNetCoreDbContext))]
-    partial class ArqNetCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200720224530_RejectNote")]
+    partial class RejectNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

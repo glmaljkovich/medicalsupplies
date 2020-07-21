@@ -23,6 +23,9 @@ namespace ArqNetCore.Entities
         [StringLength(32)]
         public string Status { get; set; }
 
+        [StringLength(255)]
+        public string Note { get; set; }
+
     }
 
     public class SuppliesOrderStatus{
