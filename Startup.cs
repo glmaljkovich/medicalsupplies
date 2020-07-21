@@ -75,7 +75,6 @@ namespace ArqNetCore
                 DB_PASSWORD = "";
             }
             string password = DB_PASSWORD;
-            Console.WriteLine("probando console " + DB_NAME);
             services.AddDbContext<ArqNetCoreDbContext>(
                 (DbContextOptionsBuilder options) => 
                 {
@@ -90,7 +89,7 @@ namespace ArqNetCore
                     //     }
                     // );
                     string connectionString = $"Host={server};Database={database};Username={user};Password={password}";
-                    Console.WriteLine(connectionString);
+                    // Console.WriteLine(connectionString);
                     options.UseNpgsql(connectionString);
                 }
             );
