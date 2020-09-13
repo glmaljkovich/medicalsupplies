@@ -37,7 +37,7 @@ namespace ArqNetCore.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("signup")]
+        [Route("")]
         public UserSignUpResponseDTO UserSignUp(UserSignUpRequestDTO userSignUpRequestDTO)
         { 
             _logger.LogInformation("UserSignUp email:" + userSignUpRequestDTO.Email);

@@ -10,7 +10,7 @@ namespace ArqNetCore.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("supplies-order")]
+    [Route("supplies-orders")]
     public class SuppliesOrderOrderController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;

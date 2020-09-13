@@ -157,6 +157,7 @@ namespace ArqNetCore
             }
             
             app.UseSerilogRequestLogging(); 
+            app.UseStaticFiles();
 
             //app.UseHttpsRedirection();
 

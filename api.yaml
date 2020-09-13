@@ -1,8 +1,8 @@
 openapi: "3.0.0"
 info:
-  description: ""
+  description: "Medical Supplies API"
   version: "1.0.0"
-  title: ""
+  title: "Medical Supplies"
   termsOfService: ""
   contact:
     email: "info@medical-supplies.com"
@@ -21,7 +21,7 @@ tags:
 - name: "area"
   description: "an area in which a medical supply is needed"
 paths:
-  /user/signup:
+  /user:
     post:
       tags:
       - "user"
@@ -129,7 +129,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AreaListResponseDTO'
-  /supplies-order:
+  /supplies-orders:
     post:
       tags:
       - "supplies"
@@ -178,7 +178,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuppliesOrderListResponseDTO'
-  /supplies-order/{suppliesOrderId}:
+  /supplies-orders/supply-types:
+    get:
+      tags:
+      - "supplies"
+      summary: "available supply types"
+      description: ""
+      operationId: "suppliesOrderSupplyTypes"
+      security:
+        - bearerJWT: []
+      responses:
+        "405":
+          description: "Invalid input"
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppliesOrderSupplyTypesResponseDTO'
+  /supplies-orders/{suppliesOrderId}:
     get:
       tags:
       - "supplies"
@@ -227,33 +245,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuppliesOrderRemoveResponseDTO'
-  /supplies-order/supply-types:
-    get:
-      tags:
-      - "supplies"
-      summary: "available supply types"
-      description: ""
-      operationId: "suppliesOrderSupplyTypes"
-      security: 
-        - bearerJWT: []
-      responses:
-        "405":
-          description: "Invalid input"
-        '200':
-          description: "Success"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuppliesOrderSupplyTypesResponseDTO'
-  /supplies-order/accept:
+  /supplies-orders/{suppliesOrderId}/accept:
     post:
       tags:
       - "supplies"
       summary: "accept an order and bind it to organization"
       description: ""
       operationId: "suppliesOrderAccept"
-      security: 
+      security:
         - bearerJWT: []
+      parameters:
+      - name: suppliesOrderId
+        in: path
+        description: ID of order
+        required: true
+        schema:
+          type: string
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -270,15 +277,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuppliesOrderAcceptResponseDTO'
-  /supplies-order/reject:
+  /supplies-orders/{suppliesOrderId}/reject:
     post:
       tags:
       - "supplies"
       summary: "reject an order"
       description: ""
       operationId: "suppliesOrderReject"
-      security: 
+      security:
         - bearerJWT: []
+      parameters:
+      - name: suppliesOrderId
+        in: path
+        description: ID of order
+        required: true
+        schema:
+          type: string
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -295,7 +309,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuppliesOrderRejectResponseDTO'
-  /organization:
+  /organizations:
     get:
       tags:
       - "organization"
@@ -313,7 +327,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrganizationListResponseDTO'
-  /organization/group-by-supply-type:
+  /organizations/group-by-supply-type:
     get:
       tags:
       - "organization"
@@ -592,9 +606,6 @@ components:
     SuppliesOrderAcceptRequestDTO:
       type: "object"
       properties:
-        supplies_order_id:
-          type: "integer"
-          format: "int32"
         organization_id:
           type: "integer"
           format: "int32"
@@ -607,9 +618,6 @@ components:
     SuppliesOrderRejectRequestDTO:
       type: "object"
       properties:
-        supplies_order_id:
-          type: "integer"
-          format: "int32"
         note:
           type: "string"
       xml:

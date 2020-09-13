@@ -9,7 +9,7 @@ using ArqNetCore.DTOs.Organization;
 namespace ArqNetCore.Controllers
 {
     [ApiController]
-    [Route("organization")]
+    [Route("organizations")]
     public class OrganizationController : ControllerBase
     {
         private readonly ILogger<OrganizationController> _logger;
