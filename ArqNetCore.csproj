@@ -27,6 +27,12 @@
     <OpenApiReference Include="api.yaml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="api.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4" />
   </ItemGroup>
   <ItemGroup>
