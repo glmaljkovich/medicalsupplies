@@ -134,12 +134,12 @@ namespace ArqNetCore.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("accept")]
-        public SuppliesOrderAcceptResponseDTO Accept(SuppliesOrderAcceptRequestDTO suppliesOrderAcceptRequestDTO)
+        [Route("{id}/accept")]
+        public SuppliesOrderAcceptResponseDTO Accept(int id, SuppliesOrderAcceptRequestDTO suppliesOrderAcceptRequestDTO)
         { 
             _logger.LogInformation("accept supplies order");
             SuppliesOrderAcceptDTO suppliesOrderAcceptDTO = new SuppliesOrderAcceptDTO{
-                SuppliesOrderId = suppliesOrderAcceptRequestDTO.Supplies_order_id,
+                SuppliesOrderId = id,
                 OrganizationId = suppliesOrderAcceptRequestDTO.Organization_id
             };
             SuppliesOrderAcceptResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.Accept(suppliesOrderAcceptDTO);
@@ -149,12 +149,12 @@ namespace ArqNetCore.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("reject")]
-        public SuppliesOrderRejectResponseDTO Reject(SuppliesOrderRejectRequestDTO suppliesOrderRejectRequestDTO)
+        [Route("{id}/reject")]
+        public SuppliesOrderRejectResponseDTO Reject(int id, SuppliesOrderRejectRequestDTO suppliesOrderRejectRequestDTO)
         { 
             _logger.LogInformation("reject supplies order");
             SuppliesOrderRejectDTO suppliesOrderRejectDTO = new SuppliesOrderRejectDTO{
-                SuppliesOrderId = suppliesOrderRejectRequestDTO.Supplies_order_id,
+                SuppliesOrderId = id,
                 Note = suppliesOrderRejectRequestDTO.Note
             };
             SuppliesOrderRejectResultDTO suppliesOrderCreateResultDTO = _iSuppliesOrderService.Reject(suppliesOrderRejectDTO);
