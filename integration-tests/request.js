@@ -32,11 +32,17 @@ module.exports = function(options){
           buffer += chunk
         });
         res.on('end', () => {
-          resolve({
+          var result = {
             data:buffer,
             headers: res.headers,
             statusCode: res.statusCode
-          })
+          }
+          if(res.statusCode >= 200 && res.statusCode < 300){
+            resolve(result)
+          }
+          else{
+            reject(result)
+          }
         });
     })
     request.on('error', (e) => {
