@@ -13,7 +13,13 @@
 
 If you don't have one already, you can create a development database with this docker command
 
-docker run --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true -p 3306:3306 -d mysql
+```bash
+docker run -d \
+  --name postgres \
+  -e POSTGRES_PASSWORD=123456 \
+  -p 5432:5432 \
+  postgres
+```
 
 ### Install dotnet-ef
 
@@ -27,25 +33,17 @@ Add to `.bashrc` or `.zshrc`
 export PATH="$PATH:$HOME/.dotnet/tools/"
 ```
 
+#### **PostgreSQL**
+- Create a database in **PostgreSQL** server and provide access to user
 
-#### **MySQL**
-- Create a database in **MySQL** server and provide access to user
-
-  ``` sql
-  CREATE DATABASE dbnetcore;
-  CREATE USER 'netcoreuser'@'%' IDENTIFIED BY 'netcorepass';
-  GRANT ALL PRIVILEGES ON dbnetcore. * TO 'netcoreuser'@'%';
-  FLUSH PRIVILEGES;
+  ```bash
+  docker exec -it postgres psql -h localhost -U postgres
   ```
-- Create initial Schema
 
   ```sql
-  CREATE TABLE `__EFMigrationsHistory` 
-  ( 
-    `MigrationId` nvarchar(150) NOT NULL, 
-    `ProductVersion` nvarchar(32) NOT NULL, 
-     PRIMARY KEY (`MigrationId`) 
-  );
+  create database dbnetcore;
+  create user netcoreuser with encrypted password 'netcorepass';
+  grant all privileges on database dbnetcore to netcoreuser;
   ```
 
 ## Build
@@ -58,7 +56,7 @@ dotnet build
 ## Run Migrations
 
 ```
-DB_NAME="medicalsupplies" DB_USERNAME="root" DB_PASSWORD=netcorepass dotnet ef database update
+DB_NAME="dbnetcore" DB_USERNAME="netcoreuser" DB_PASSWORD="netcorepass" dotnet ef database update
 ```
 
 you can source a file to avois writing password in terminal
@@ -67,7 +65,7 @@ you can source a file to avois writing password in terminal
 
 ```
 cd api
-DB_NAME="medicalsupplies" DB_USERNAME="root" DB_PASSWORD=netcorepass dotnet run
+DB_NAME="dbnetcore" DB_USERNAME="netcoreuser" DB_PASSWORD=netcorepass dotnet run
 ```
 
 you can source a file to avois writing password in terminal
@@ -104,16 +102,35 @@ docker run --rm -it -e ACCEPT_EULA=Y -p 5341:80 datalust/seq
 
 ## create and run with docker
 
+
+Simple image
 ```
 docker build -t medicalsupplies .
 ```
 
+Riemann image
+```
+docker build -t medicalsupplies-riemann -f DockerfileRiemann .
+```
+
 ```
 docker run --rm -it \
+ --name medicalsupplies \
  -e DB_URL=192.168.0.31 \
  -e DB_NAME=dbnetcore \
  -e DB_USERNAME=netcoreuser \
  -e DB_PASSWORD=netcorepass \
  -p 8080:80 \
  medicalsupplies
+```
+
+```
+docker run --rm -it \
+ --name medicalsupplies-riemann \
+ -e DB_URL=192.168.0.31 \
+ -e DB_NAME=dbnetcore \
+ -e DB_USERNAME=netcoreuser \
+ -e DB_PASSWORD=netcorepass \
+ -p 8080:80 \
+ medicalsupplies-riemann
 ```
