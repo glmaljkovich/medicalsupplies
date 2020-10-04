@@ -41,5 +41,7 @@
   <Target Name="PrePublishTarget" AfterTargets="Publish">
     <Exec Command="dotnet tool restore" />
     <Exec Command="dotnet ef database update" />
+    <Exec Command="curl https://github.com/DataDog/dd-trace-dotnet/releases/download/v1.19.4/datadog-dotnet-apm_1.19.4_amd64.deb --output datadog.deb" />
+    <Exec Command="sudo dpkg -i ./datadog.deb" />
   </Target>
 </Project>
