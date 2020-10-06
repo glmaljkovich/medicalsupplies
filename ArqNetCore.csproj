@@ -41,6 +41,6 @@
   <Target Name="PrePublishTarget" AfterTargets="Publish">
     <Exec Command="dotnet tool restore" />
     <Exec Command="dotnet ef database update" />
-    <Exec Command="bash <(curl -Ss https://my-netdata.io/kickstart.sh) --no-updates --stable-channel --disable-telemetry" />
+    
   </Target>
 </Project>
