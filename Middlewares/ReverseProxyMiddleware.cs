@@ -98,7 +98,7 @@ namespace ArqNetCore.Middlewares
 
       if (request.Path.StartsWithSegments("/netdata", out var remainingPath))
       {
-        targetUri = new Uri("localhost:19999" + remainingPath);
+        targetUri = new Uri("http://localhost:19999" + remainingPath);
       }
 
       return targetUri;
