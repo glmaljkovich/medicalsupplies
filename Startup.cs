@@ -16,6 +16,7 @@ using AutoMapper;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using ArqNetCore.Configuration;
 using ArqNetCore.Services;
+using ArqNetCore.Middlewares;
 using NSwag.AspNetCore;
 using Serilog;
 using Serilog.Events;
@@ -158,6 +159,7 @@ namespace ArqNetCore
             
             app.UseSerilogRequestLogging(); 
             app.UseStaticFiles();
+            app.UseMiddleware<ReverseProxyMiddleware>();
 
             //app.UseHttpsRedirection();
 
