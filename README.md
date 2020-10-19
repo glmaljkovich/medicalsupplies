@@ -12,8 +12,14 @@
 ## Setup
 
 If you don't have one already, you can create a development database with this docker command
-
-docker run --name postgres -e POSTGRES_USER=netcoreuser -e POSTGRES_PASSWORD=netcorepass -p 5432:5432 -d postgres
+```
+docker run --name dbnetcore \
+  -e POSTGRES_USER=netcoreuser \
+  -e POSTGRES_PASSWORD=netcorepass \
+  --network medisuplinewouwu \
+  -p 5432:5432 \
+  -d postgres
+```
 
 ### Install dotnet-ef
 
@@ -27,47 +33,24 @@ Add to `.bashrc` or `.zshrc`
 export PATH="$PATH:$HOME/.dotnet/tools/"
 ```
 
-
-#### **MySQL**
-- Create a database in **MySQL** server and provide access to user
-
-  ``` sql
-  CREATE DATABASE dbnetcore;
-  CREATE USER 'netcoreuser'@'%' IDENTIFIED BY 'netcorepass';
-  GRANT ALL PRIVILEGES ON dbnetcore. * TO 'netcoreuser'@'%';
-  FLUSH PRIVILEGES;
-  ```
-- Create initial Schema
-
-  ```sql
-  CREATE TABLE `__EFMigrationsHistory` 
-  ( 
-    `MigrationId` nvarchar(150) NOT NULL, 
-    `ProductVersion` nvarchar(32) NOT NULL, 
-     PRIMARY KEY (`MigrationId`) 
-  );
-  ```
-
 ## Build
 
 ```
-cd api
 dotnet build
 ```
 
 ## Run Migrations
 
 ```
-DB_NAME="medicalsupplies" DB_USERNAME="netcoreuser" DB_PASSWORD=netcorepass dotnet ef database update
+DB_NAME="dbnetcore" DB_USERNAME="netcoreuser" DB_PASSWORD=netcorepass dotnet ef database update
 ```
 
-you can source a file to avois writing password in terminal
+you can source a file to avoid writing password in terminal
 
 ## Run
 
 ```
-cd api
-DB_NAME="medicalsupplies" DB_USERNAME="netcoreuser" DB_PASSWORD=netcorepass dotnet run
+DB_NAME="dbnetcore" DB_USERNAME="netcoreuser" DB_PASSWORD=netcorepass dotnet run
 ```
 
 you can source a file to avois writing password in terminal
@@ -103,19 +86,14 @@ docker run --rm -it -e ACCEPT_EULA=Y -p 5341:80 datalust/seq
 ```
 
 ## create and run with docker
-
+create the network
 ```
-docker build \
- -e DB_URL=192.168.0.31 \
- -e DB_NAME=dbnetcore \
- -e DB_USERNAME=netcoreuser \
- -e DB_PASSWORD=netcorepass \
- -t medicalsupplies .
+docker network create medisuplinewouwu
 ```
-
+run the app
 ```
 docker run --rm -it \
- -e DB_URL=192.168.0.31 \
+ -e DB_URL=dbnetcore \
  -e DB_NAME=dbnetcore \
  -e DB_USERNAME=netcoreuser \
  -e DB_PASSWORD=netcorepass \
@@ -127,7 +105,6 @@ docker run --rm -it \
 
 ## Run Datadog agent
 ```
-docker network create medisuplinewouwu
 docker run -d --name datadog-agent \
           --network medisuplinewouwu \
           -v /var/run/docker.sock:/var/run/docker.sock:ro \
