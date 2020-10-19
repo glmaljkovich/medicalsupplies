@@ -10,11 +10,13 @@ namespace ArqNetCore
     {
         public static void Main(string[] args)
         {
+        string DD_API_KEY = Environment.GetEnvironmentVariable("DD_API_KEY");
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
-            .WriteTo.Console() // Output Console
+            //.WriteTo.Console() // Output Console
             //.WriteTo.File(new RenderedCompactJsonFormatter(), "../logs/log-medical-supplies.ndjson") // Output to log file with json structure
             //.WriteTo.Seq("http://localhost:5341") // Output to Seq
+            .WriteTo.DatadogLogs(DD_API_KEY)
             .CreateLogger();
         try
         {

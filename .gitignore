@@ -38,3 +38,6 @@ msbuild.wrn
 dist/
 
 logs/
+
+# env files
+.env

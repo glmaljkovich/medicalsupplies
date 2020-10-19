@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Datadog.Trace" Version="1.19.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
@@ -21,7 +22,7 @@
     </PackageReference>
     <PackageReference Include="NSwag.AspNetCore" Version="13.5.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
+    <PackageReference Include="Serilog.Sinks.Datadog.Logs" Version="0.3.3" />
   </ItemGroup>
   <ItemGroup>
     <OpenApiReference Include="api.yaml" />
@@ -39,7 +40,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
   </ItemGroup>
   <Target Name="PrePublishTarget" AfterTargets="Publish">
-    <Exec Command="dotnet tool restore" />
-    <Exec Command="dotnet ef database update" />
+    <Exec Command="dotnet tool restore" Condition="$(RUN_MIGRATIONS) == true" />
+    <Exec Command="dotnet ef database update" Condition="$(RUN_MIGRATIONS) == true" />
   </Target>
 </Project>
