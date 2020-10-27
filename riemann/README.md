@@ -39,3 +39,17 @@ docker run --rm -d \
  grafana/grafana:6.5.0
 
 credentials admin:admin
+
+grafana graphite config
+
+URL: http://192.168.0.31:<80 binding port>
+Access: Server
+BasicAutentication: true
+WithCredentials: true
+User: root
+Password: root
+Version: 1.1.7
+Type: MetricTank
+
+#currently it is necessary to get up Graphite storage to ensure Riemann collect metrics
+
