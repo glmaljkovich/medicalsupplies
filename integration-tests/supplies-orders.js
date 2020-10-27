@@ -25,7 +25,7 @@ module.exports = {
       },
       data:{
         supply_type: options.supplyType,
-        supply_attributes: options.supplyAttributes,
+        supply_attributes: options.supplyAttributes || {},
         area_id: options.areaId,
       }
     })
@@ -41,6 +41,9 @@ module.exports = {
         'content-type':'application/json',
         'Authorization': 'Bearer ' + options.token
       }
+    })
+    .then((res)=>{
+      return JSON.parse(res.data).id
     })
   }
 }

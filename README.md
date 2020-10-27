@@ -127,6 +127,7 @@ docker run --rm -it \
 ```
 docker run --rm -it \
  --name medicalsupplies-riemann \
+ -e RIEMANN_HOST=192.168.0.31 \
  -e DB_URL=192.168.0.31 \
  -e DB_NAME=dbnetcore \
  -e DB_USERNAME=netcoreuser \
@@ -134,3 +135,4 @@ docker run --rm -it \
  -p 8080:80 \
  medicalsupplies-riemann
 ```
+
