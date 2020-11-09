@@ -33,8 +33,6 @@ RUN apt-get update && apt-get install -y curl ruby ruby-dev ruby-bundler build-e
 RUN gem install riemann-tools --no-rdoc --no-ri
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN gem install riemann-tools --no-rdoc --no-ri
-
 ENV NODE_VERSION=12.6.0
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
@@ -52,10 +50,10 @@ COPY --from=build-env /app/dist .
 WORKDIR /middleware
 
 COPY \
-  riemann/middleware/cmd.sh \
-  riemann/middleware/index.js \
-  riemann/middleware/package.json \
-  riemann/middleware/package-lock.json \
+  monitoring/middleware/cmd.sh \
+  monitoring/middleware/index.js \
+  monitoring/middleware/package.json \
+  monitoring/middleware/package-lock.json \
   ./
 
 RUN npm install

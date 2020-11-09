@@ -1,0 +1,6 @@
+datasources:
+  - name: Graphite
+    url: $GRAPHITE_URL
+    user: $GRAPHITE_USER
+    secureJsonData:
+      password: $GRAPHITE_PASSWORD
