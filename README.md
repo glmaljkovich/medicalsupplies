@@ -4,7 +4,7 @@
 
 - .NET Core >= 3.1
 - [Entity Framework CLI](#install-dotnet-ef)
-- A MySQL database
+- A Postgres database
 - Docker >= 19.0 (only development)
 
 
@@ -59,12 +59,11 @@ dotnet build
 DB_NAME="dbnetcore" DB_USERNAME="netcoreuser" DB_PASSWORD="netcorepass" dotnet ef database update
 ```
 
-you can source a file to avois writing password in terminal
+you can source a file to avoid writing password in terminal
 
 ## Run
 
 ```
-cd api
 DB_NAME="dbnetcore" DB_USERNAME="netcoreuser" DB_PASSWORD=netcorepass dotnet run
 ```
 
@@ -76,7 +75,7 @@ The app will be available at http://localhost:5000
 
 The appication integrates swagger-ui application
 
-You can read [api.yaml]() or browse:
+You can read [api.yaml](https://github.com/glmaljkovich/medicalsupplies/blob/master/api.yaml) or browse:
 
 ```
 http://<api-host>:<api-port>/swagger
@@ -90,7 +89,7 @@ Use [Serilog](https://github.com/serilog/serilog-aspnetcore) to manage logg, fir
 dotnet add package Serilog.AspNetCore
 ```
 
-For use Seq install:
+To use Seq as a sink install:
 ```
 dotnet add package Serilog.Sinks.Seq
 ```
@@ -100,17 +99,12 @@ And run Seq image:
 docker run --rm -it -e ACCEPT_EULA=Y -p 5341:80 datalust/seq
 ```
 
-## create and run with docker
+## Create and run with docker
 
 
-Simple image
+**Simple image**
 ```
 docker build -t medicalsupplies .
-```
-
-Riemann image
-```
-docker build -t medicalsupplies-riemann -f DockerfileRiemann .
 ```
 
 ```
@@ -122,6 +116,11 @@ docker run --rm -it \
  -e DB_PASSWORD=netcorepass \
  -p 8080:80 \
  medicalsupplies
+```
+
+**Riemann image**
+```
+docker build -t medicalsupplies-riemann -f DockerfileRiemann .
 ```
 
 ```
