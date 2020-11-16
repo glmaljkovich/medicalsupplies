@@ -49,7 +49,6 @@ export PATH="$PATH:$HOME/.dotnet/tools/"
 ## Build
 
 ```
-cd api
 dotnet build
 ```
 
@@ -67,7 +66,7 @@ you can source a file to avoid writing password in terminal
 DB_NAME="dbnetcore" DB_USERNAME="netcoreuser" DB_PASSWORD=netcorepass dotnet run
 ```
 
-you can source a file to avois writing password in terminal
+you can source a file to avoid writing password in terminal
 
 The app will be available at http://localhost:5000
 
@@ -110,7 +109,7 @@ docker build -t medicalsupplies .
 ```
 docker run --rm -it \
  --name medicalsupplies \
- -e DB_URL=192.168.0.31 \
+ -e DB_URL=host.docker.internal \
  -e DB_NAME=dbnetcore \
  -e DB_USERNAME=netcoreuser \
  -e DB_PASSWORD=netcorepass \
@@ -126,8 +125,8 @@ docker build -t medicalsupplies-riemann -f DockerfileRiemann .
 ```
 docker run --rm -it \
  --name medicalsupplies-riemann \
- -e RIEMANN_HOST=192.168.0.31 \
- -e DB_URL=192.168.0.31 \
+ -e RIEMANN_HOST=host.docker.internal \
+ -e DB_URL=host.docker.internal \
  -e DB_NAME=dbnetcore \
  -e DB_USERNAME=netcoreuser \
  -e DB_PASSWORD=netcorepass \
@@ -135,3 +134,39 @@ docker run --rm -it \
  medicalsupplies-riemann
 ```
 
+## Load tests
+
+**Requirements**
+- artillery `npm i -g artillery`
+- Create an admin user
+  ```bash
+  docker exec -it postgres psql -h localhost -U postgres
+  ```
+
+  ```sql
+  \l
+  \c dbnetcore
+  \dt
+  SELECT * FROM "Users";
+  UPDATE "Users" SET "IsAdmin" = true WHERE "Email" = 'admin@admin.com';
+  ```
+
+- set these environment variables to the corresponding users in your DB
+  ```bash
+  export EMAIL=user@user.com
+  export PASSWORD=user1234
+  export ADMIN_EMAIL=admin@admin.com
+  export ADMIN_PASSWORD=admin1234
+  ```
+
+**Run**
+
+```bash
+cd integration-tests
+artillery run -o load-test-report.json load-test.yml
+```
+
+**Generate HTML report**
+```bash
+artillery report -o report.html load-test-report.json
+```

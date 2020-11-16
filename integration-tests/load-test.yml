@@ -1,74 +1,80 @@
 config:
-  target: "{{ $processEnvironment.API_URL }}"
+  target: "http://localhost:8080"
   http:
-    timeout: 10 # defaults to 120s
+    timeout: 60 # defaults to 120s
   tls:
     rejectUnauthorized: false
+  environments:
+    production:
+      target: "http://medicalsupplies-back.herokuapp.com"
+    dev:
+      target: "http://localhost:8080"
   phases:
-    - duration: 10
+    - duration: 20
       arrivalRate: 5
       name: Warm up
-    - duration: 10
+    - duration: 20
       arrivalRate: 5
-      rampTo: 500
+      rampTo: 100
       name: Ramp up load
-    - duration: 10
-      arrivalRate: 500
+    - duration: 20
+      arrivalRate: 100
       name: Sustained load
-  scenarios:
-    # We define one scenario:
-    - name: "User login, create order, chicken out and delete it before someone sees it"
-      flow:
-        # Login
-        - post:
-            url: "/user/signin"
-            json:
-                email: "{{ $processEnvironment.EMAIL }}"
-                password: "{{ $processEnvironment.PASSWORD }}"
-            # The endpoint responds with JSON, which we parse and extract a field from
-            # to use in the next request:
-            capture:
-              json: "$.access_token"
-              as: "user_token"
-        # Get the profile:
-        - get:
-            url: "/user/profile"
-            headers:
-                content-type: 'application/json'
-                Authorization: "Bearer {{ user_token }}"
-        # Create order
-        - post:
-            url: "/supplies-orders"
-            json:
-                supply_type: "MASCARA_PROTECTORA"
-                area_id: "ATENCION_A_PACIENTES"
-            headers:
-                content-type: 'application/json'
-                Authorization: "Bearer {{ user_token }}"
-            capture:
-                json: "$.id"
-                as: "id"
-        - delete:
-            url: "/suplies-orders/{{ id }}"
-            headers:
+scenarios:
+  # We define one scenario:
+  - name: "User login, create order, chicken out and delete it before someone sees it"
+    flow:
+      # Login
+      - post:
+          url: "/user/signin"
+          json:
+              email: "{{ $processEnvironment.EMAIL }}"
+              password: "{{ $processEnvironment.PASSWORD }}"
+          # The endpoint responds with JSON, which we parse and extract a field from
+          # to use in the next request:
+          capture:
+            json: "$.access_token"
+            as: "user_token"
+      # Get the profile:
+      - get:
+          url: "/user/profile"
+          headers:
               content-type: 'application/json'
               Authorization: "Bearer {{ user_token }}"
-    - name: "Admin logins and looks at its profile"
-      flow:
-        # Login
-        - post:
-            url: "/user/signin"
-            json:
-                email: "{{ $processEnvironment.ADMIN_EMAIL }}"
-                password: "{{ $processEnvironment.ADMIN_PASSWORD }}"
-            # The endpoint responds with JSON, which we parse and extract a field from
-            # to use in the next request:
-            capture:
-              json: "$.access_token"
-              as: "admin_token"
-        # Get the profile:
-        - get:
-            url: "/user/profile"
-            headers:
-                content-type: 'application/json'
-                Authorization: "Bearer {{ admin_token }}"
+      # Create order
+      - post:
+          url: "/supplies-orders"
+          json:
+              supply_type: "MASCARA_PROTECTORA"
+              area_id: "ATENCION_A_PACIENTES"
+              supply_attributes: {}
+          headers:
+              content-type: 'application/json'
+              Authorization: "Bearer {{ user_token }}"
+          capture:
+              json: "$.id"
+              as: "id"
+      - delete:
+          url: "/suplies-orders/{{ id }}"
+          headers:
+            content-type: 'application/json'
+            Authorization: "Bearer {{ user_token }}"
+  - name: "Admin logins and looks at its profile"
+    flow:
+      # Login
+      - post:
+          url: "/user/signin"
+          json:
+              email: "{{ $processEnvironment.ADMIN_EMAIL }}"
+              password: "{{ $processEnvironment.ADMIN_PASSWORD }}"
+          # The endpoint responds with JSON, which we parse and extract a field from
+          # to use in the next request:
+          capture:
+            json: "$.access_token"
+            as: "admin_token"
+      # Get the profile:
+      - get:
+          url: "/user/profile"
+          headers:
+              content-type: 'application/json'
+              Authorization: "Bearer {{ admin_token }}"
