@@ -4,16 +4,16 @@ services:
     build:
       context: ./
       dockerfile: DockerfileRiemann
-
-    container_name: medicalsupplies-riemann
     tty: true
     environment:
+      - RIEMANN_APPLICATION_NAME=medicalsupplies
+      - RIEMANN_ATTRIBUTES=docker=true
       - RIEMANN_HOST=riemann
+      - RIEMANN_PORT=5555
       - DB_NAME=dbnetcore
       - DB_USERNAME=netcoreuser
       - DB_PASSWORD=123456
       - DB_URL=db
-      - RIEMANN_PORT=5555
     ports:
       - "8000:80"
     links:
@@ -32,7 +32,6 @@ services:
 
   db:
     image: postgres
-    container_name: postgres
     environment:
       - POSTGRES_PASSWORD=123456
     ports:
@@ -41,7 +40,6 @@ services:
   riemann:
     build:
       context: ./monitoring/collector
-    container_name: riemann
     ports:
       - "5555:5555"
       - "5555:5555/udp"
@@ -54,7 +52,6 @@ services:
 
   riemann_dashboard:
     build: ./monitoring/dashboard
-    container_name: riemann_dashboard
     ports:
       - "4567:4567"
     depends_on:
@@ -63,7 +60,6 @@ services:
 
   graphite:
     image: graphiteapp/graphite-statsd:1.1.7-6
-    container_name: graphite
     ports:
       - "9000:80"
       - "2003:2003"
@@ -79,7 +75,6 @@ services:
 
   grafana:
     build: ./monitoring/grafana
-    container_name: grafana
     ports:
       - "3000:3000"
     depends_on:

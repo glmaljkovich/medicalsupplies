@@ -1,41 +1,69 @@
 var https = require("https");
 var http = require("http");
+var hostname = require('os').hostname();
+
 var riemann = require('riemannjs').createClient({
   host: process.env.RIEMANN_HOST,
   port: process.env.RIEMANN_PORT? parseInt(process.env.RIEMANN_PORT) : 5555
 });
 
+var riemannAttributes = (function(){
+  var result = [{
+    key:'hostname',
+    value: hostname
+  }]
+  if(typeof process.env.RIEMANN_ATTRIBUTES != 'string'){
+    return result;
+  }
+  var input = process.env.RIEMANN_ATTRIBUTES
+  var valuesRegex = new RegExp('([^=]+)=([^,]+),?', 'g');
+  var matches;
+  while (matches = valuesRegex.exec(input)) {
+    result.push({
+      key: matches[1],
+      value: matches[2]
+    })
+  }
+  return result;
+})()
+
+
 const PORT = process.env.PORT || '8000'
 const TARGET_URL = process.env.TARGET_URL
+const HTTP_RESPONSE_THRESHOLD = process.env.HTTP_RESPONSE_THRESHOLD? parseFloat(process.env.HTTP_RESPONSE_THRESHOLD) : 30.0;
+
+console.log('RIEMANN_HOST', process.env.RIEMANN_HOST)
+console.log('RIEMANN_PORT', process.env.RIEMANN_PORT)
+console.log('HTTP_RESPONSE_THRESHOLD', HTTP_RESPONSE_THRESHOLD)
+console.log('RIEMANN_ATTRIBUTES', JSON.stringify(riemannAttributes, null, 2))
+console.log('TARGET_URL', process.env.TARGET_URL)
+console.log('PORT', process.env.PORT)
 
 if(!TARGET_URL){
- throw {
-   message: "TARGET_URL environment variable expected"
- }
+  throw {
+    message: "TARGET_URL environment variable expected"
+  }
 }
 
 var notify = function(initTime, statusCode){
   var delta = process.hrtime(initTime);
   var deltaSeconds = delta[0] + (delta[1] / 1000000)
   console.log("request end in: " + deltaSeconds + "s" )
+  var responseTime = deltaSeconds > HTTP_RESPONSE_THRESHOLD? 1 : deltaSeconds / HTTP_RESPONSE_THRESHOLD
   riemann.send(riemann.Event({
     service: 'http-response-time',
-    metric:  deltaSeconds,
-    tags:    ['nonblocking'],
-    attributes: [{
-      key:'application',
-      value: process.env.APPLICATION_NAME || 'UNKNOW'
-    }],
+    metric: responseTime,
+    tags: ['nonblocking'],
+    host: process.env.RIEMANN_APPLICATION_NAME || 'UNKNOW',
+    attributes: riemannAttributes,
     state:   'ok'
   }));
   riemann.send(riemann.Event({
     service: 'http-status-code',
-    metric:  statusCode || 0,
-    tags:    ['nonblocking'],
-    attributes: [{
-      key:'application',
-      value: process.env.APPLICATION_NAME || 'UNKNOW'
-    }],
+    metric: statusCode ? statusCode / 1000.0 : 0,
+    tags: ['nonblocking'],
+    host: process.env.RIEMANN_APPLICATION_NAME || 'UNKNOW',
+    attributes: riemannAttributes,
     state:   'ok'
   }));
 }
@@ -66,10 +94,6 @@ const giveBack = function giveBack(target, client, initTime) {
     client.response.end();
     notify(initTime, target.response.statusCode);
   });
-}
-
-function logerror(error) {
-  console.log("Got error: " + error.message);
 }
 
 const forward = function forward(client) {
@@ -161,8 +185,6 @@ const onListenStart = function onListenStart(server){
     statusLoop.start(server)
   }
 }
-
-
 
 var server = http.createServer(handler);
 server.listen(PORT, onListenStart(server));
