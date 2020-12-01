@@ -31,18 +31,21 @@ namespace ArqNetCore
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:3000", "https://medicalsupplies-front.netlify.app")
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
-                    });
+                string ALLOWED_ORIGINS = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS");
+                if(ALLOWED_ORIGINS == null  || string.IsNullOrWhiteSpace(ALLOWED_ORIGINS)){
+                  return;
+                }
+                string[] allowedOrigins = ALLOWED_ORIGINS.Split(",");
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins(allowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
             });
             services.AddAutoMapper(typeof(Startup));
             string DB_URL = Environment.GetEnvironmentVariable("DB_URL");
@@ -50,13 +53,13 @@ namespace ArqNetCore
             {
                 DB_URL = "localhost";
             }
-            string server = DB_URL;
-            // string DB_PORT = Environment.GetEnvironmentVariable("DB_PORT");
-            // if(DB_PORT == null || string.IsNullOrWhiteSpace(DB_PORT))
-            // {
-            //     DB_PORT = "3306";
-            // }
-            // string port = DB_PORT;
+            string host = DB_URL;
+            string DB_PORT = Environment.GetEnvironmentVariable("DB_PORT");
+            if(DB_PORT == null || string.IsNullOrWhiteSpace(DB_PORT))
+            {
+                DB_PORT = "5432";
+            }
+            string port = DB_PORT;
             string DB_NAME = Environment.GetEnvironmentVariable("DB_NAME");
             if(DB_NAME == null || string.IsNullOrWhiteSpace(DB_NAME))
             {
@@ -75,24 +78,11 @@ namespace ArqNetCore
                 DB_PASSWORD = "";
             }
             string password = DB_PASSWORD;
-            services.AddDbContext<ArqNetCoreDbContext>(
-                (DbContextOptionsBuilder options) => 
-                {
-                    // options.UseMySQL(
-                    //     $"server={server};port={port};database={database};user={user};password={password}", 
-                    //     (MySQLDbContextOptionsBuilder builder) => 
-                    //     {
-                    //         builder.ExecutionStrategy(context => 
-                    //         {
-                    //             return new ArqNetDbExecutionStrategy(context);
-                    //         });
-                    //     }
-                    // );
-                    string connectionString = $"Host={server};Database={database};Username={user};Password={password}";
-                    // Console.WriteLine(connectionString);
-                    options.UseNpgsql(connectionString);
-                }
-            );
+            services.AddDbContext<ArqNetCoreDbContext>((DbContextOptionsBuilder options) => 
+            {
+                string connectionString = $"Host={host};Port={port};Database={database};Username={user};Password={password}";
+                options.UseNpgsql(connectionString);
+            });
             services.AddHttpClient();
             services.AddControllers();
             services.AddSwaggerDocument();
@@ -121,7 +111,7 @@ namespace ArqNetCore
                 {
                     OnTokenValidated = context =>
                     {
-                        //it is not necesary due token should be signed 
+                        // it is not necesary due token should be signed 
                         // var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                         // var email = context.Principal.Identity.Name;
                         // var user = userService.GetByEmail(email);

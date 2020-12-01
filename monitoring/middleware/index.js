@@ -2,6 +2,12 @@ var https = require("https");
 var http = require("http");
 var hostname = require('os').hostname();
 
+var log = function(){
+  if(process.env.MIDDLEWARE_LOGS){
+    console.log.apply(console, arguments)
+  }
+}
+
 var riemann = require('riemannjs').createClient({
   host: process.env.RIEMANN_HOST,
   port: process.env.RIEMANN_PORT? parseInt(process.env.RIEMANN_PORT) : 5555
@@ -32,12 +38,12 @@ const PORT = process.env.PORT || '8000'
 const TARGET_URL = process.env.TARGET_URL
 const HTTP_RESPONSE_THRESHOLD = process.env.HTTP_RESPONSE_THRESHOLD? parseFloat(process.env.HTTP_RESPONSE_THRESHOLD) : 30.0;
 
-console.log('RIEMANN_HOST', process.env.RIEMANN_HOST)
-console.log('RIEMANN_PORT', process.env.RIEMANN_PORT)
-console.log('HTTP_RESPONSE_THRESHOLD', HTTP_RESPONSE_THRESHOLD)
-console.log('RIEMANN_ATTRIBUTES', JSON.stringify(riemannAttributes, null, 2))
-console.log('TARGET_URL', process.env.TARGET_URL)
-console.log('PORT', process.env.PORT)
+log('RIEMANN_HOST', process.env.RIEMANN_HOST)
+log('RIEMANN_PORT', process.env.RIEMANN_PORT)
+log('HTTP_RESPONSE_THRESHOLD', HTTP_RESPONSE_THRESHOLD)
+log('RIEMANN_ATTRIBUTES', JSON.stringify(riemannAttributes, null, 2))
+log('TARGET_URL', process.env.TARGET_URL)
+log('PORT', process.env.PORT)
 
 if(!TARGET_URL){
   throw {
@@ -48,7 +54,7 @@ if(!TARGET_URL){
 var notify = function(initTime, statusCode){
   var delta = process.hrtime(initTime);
   var deltaSeconds = delta[0] + (delta[1] / 1000000)
-  console.log("request end in: " + deltaSeconds + "s" )
+  log("request end in: " + deltaSeconds + "s" )
   var responseTime = deltaSeconds > HTTP_RESPONSE_THRESHOLD? 1 : deltaSeconds / HTTP_RESPONSE_THRESHOLD
   riemann.send(riemann.Event({
     service: 'http-response-time',
@@ -155,8 +161,8 @@ const statusLoop = (function startStatusLoop(){
   const status = function status(){
     server.getConnections(function(error, count){
       if(count > 0){
-        console.log("[status][ " + (index++) + " ]")
-        console.log("connections count: " + count)
+        log("[status][ " + (index++) + " ]")
+        log("connections count: " + count)
       }
     })
   }
@@ -180,8 +186,8 @@ const statusLoop = (function startStatusLoop(){
 
 const onListenStart = function onListenStart(server){
   return function onListenStartWithServer(){
-    console.log("listening on port: " + PORT);
-    console.log("endpoint: ", endpoint);
+    log("listening on port: " + PORT);
+    log("endpoint: ", endpoint);
     statusLoop.start(server)
   }
 }

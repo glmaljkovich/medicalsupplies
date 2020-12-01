@@ -4,7 +4,6 @@ services:
     build:
       context: ./
       dockerfile: DockerfileRiemann
-    tty: true
     environment:
       - RIEMANN_APPLICATION_NAME=medicalsupplies
       - RIEMANN_ATTRIBUTES=docker=true
@@ -16,26 +15,19 @@ services:
       - DB_URL=db
     ports:
       - "8000:80"
-    links:
-      - db
     depends_on:
       - db
       - riemann
-    deploy:
-      resources:
-        limits:
-          cpus: "0.001"
-          memory: 50M
-        reservations:
-          cpus: "0.0001"
-          memory: 20M
 
   db:
     image: postgres
     environment:
       - POSTGRES_PASSWORD=123456
+      - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
       - "5432:5432"
+    volumes: 
+      - ./docker-postgres-init.sql:/docker-entrypoint-initdb.d/docker-postgres-init.sql
 
   riemann:
     build:

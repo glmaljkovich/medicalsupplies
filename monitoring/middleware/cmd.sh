@@ -12,6 +12,7 @@ fi
 
 echo "using riemann port: $RIEMANN_PORT_OR_DEFAULT"
 echo "using riemann host: $RIEMANN_HOST"
+echo "using middleware logs enabled: $MIDDLEWARE_LOGS"
 echo "using application name: $APPLICATION_NAME_OR_DEFAULT"
 
 (cd /app ; dotnet /app/ArqNetCore.dll) &
