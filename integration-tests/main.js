@@ -9,11 +9,11 @@ UPDATE "Users" SET "IsAdmin" = true WHERE "Email" = 'admin@admin.com';
 
 nave use 12
 export API_URL=http://medicalsupplies-back.herokuapp.com
-export API_URL=http://localhost:8080
+export API_URL=http://localhost:8000
 export EMAIL=user@user.com
 export PASSWORD=user
-export ADMIN_EMAIL=admin@admin.com
-export ADMIN_PASSWORD=admin
+export ADMIN_EMAIL=admin@medicalsupplies.org
+export ADMIN_PASSWORD=123456
 node integration-tests/main.js $times $between
 */
 

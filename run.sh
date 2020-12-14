@@ -3,7 +3,7 @@
 export COMPOSE_PROJECT_NAME=medicalsupplies
 
 docker-compose down
-docker-compose up -d
+docker-compose --compatibility up -d 
 
 docker run --rm -it \
   -v ${PWD}/.config:/workspace/.config \
@@ -26,6 +26,6 @@ docker run --rm -it \
   -e DB_NAME=dbnetcore \
   -e DB_USERNAME=netcoreuser \
   -e DB_PASSWORD=netcorepass \
-  -e DB_URL=192.168.0.31 \
+  -e DB_URL=`hostname -i` \
   mcr.microsoft.com/dotnet/core/sdk:3.1 \
   /bin/bash -c "dotnet restore; dotnet tool restore; dotnet ef database update"

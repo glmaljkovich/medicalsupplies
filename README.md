@@ -170,3 +170,33 @@ artillery run -o load-test-report.json load-test.yml
 ```bash
 artillery report -o report.html load-test-report.json
 ```
+
+**Reset databas**
+
+```sql
+DELETE FROM  public."__EFMigrationsHistory";
+DROP TABLE public."Users";
+DROP TABLE public."SupplyAttributes";
+DROP TABLE public."Supplies";
+DROP TABLE public."SuppliesOrders";
+DROP TABLE public."Accounts";
+DROP TABLE public."SupplyTypeAttributes";
+DROP TABLE public."OrganizationSupplyTypes";
+DROP TABLE public."SupplyTypes";
+DROP TABLE public."Organizations";
+DROP TABLE public."Areas";
+```
+
+#### build & update docker-compose-container
+
+```bash
+docker-compose up -d --no-deps --build <service_name>
+#eg: docker-compose up -d --no-deps --build app
+```
+
+#### build & update docker-compose-container
+
+```bash
+docker-compose up -d --no-deps <service_name>
+#eg: docker-compose up -d --no-deps app
+```

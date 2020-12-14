@@ -4,7 +4,7 @@ docker run --rm -d \
  -p 5555:5555 \
  -p 5555:5555/udp \
  -p 5556:5556 \
- -e GRAPHITE_HOST=192.168.0.31 \
+ -e GRAPHITE_HOST=`hostname -i` \
  --name riemann riemann
 
 docker run --rm -d \
@@ -42,7 +42,7 @@ credentials admin:admin
 
 grafana graphite config
 
-URL: http://192.168.0.31:<80 binding port>
+URL: http://<host-ip>:<80 binding port>
 Access: Server
 BasicAutentication: true
 WithCredentials: true

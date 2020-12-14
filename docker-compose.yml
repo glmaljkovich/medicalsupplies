@@ -18,7 +18,13 @@ services:
     depends_on:
       - db
       - riemann
-
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 50M
+        reservations:
+          memory: 40M
   db:
     image: postgres
     environment:
@@ -66,7 +72,8 @@ services:
       - app
 
   grafana:
-    build: ./monitoring/grafana
+    image: grafana/grafana:6.5.0
+    # build: ./monitoring/grafana
     ports:
       - "3000:3000"
     depends_on:

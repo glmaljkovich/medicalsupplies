@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ArqNetCore.Migrations
 {
@@ -248,6 +250,27 @@ namespace ArqNetCore.Migrations
                     { "GUANTE", 1 },
                     { "MEDICAMENTO", 3 }
                 });
+
+            string adminEmail = "admin@medicalsupplies.org";
+            string adminPassRaw = "123456";
+            byte[] valueHash = null;
+            byte[] valueSalt = null;
+            using (var hmac = new HMACSHA512())
+            {
+                valueSalt = hmac.Key;
+                byte[] encoded = Encoding.UTF8.GetBytes(adminPassRaw);
+                valueHash = hmac.ComputeHash(encoded);
+            }
+
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "Id", "PasswordHash", "PasswordSalt", "Enable" },
+                values: new object[]{ adminEmail, valueHash, valueSalt, true });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Email", "FirstName", "IsAdmin" },
+                values: new object[]{ adminEmail, "admin", true });
 
             migrationBuilder.InsertData(
                 table: "SupplyTypeAttributes",

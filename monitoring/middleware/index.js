@@ -53,24 +53,41 @@ if(!TARGET_URL){
 
 var notify = function(initTime, statusCode){
   var delta = process.hrtime(initTime);
-  var deltaSeconds = delta[0] + (delta[1] / 1000000)
+  var deltaSeconds = delta[0] + (delta[1] / 1000000000)
+  var deltaMilliSeconds = delta[0] * 1000 + (delta[1] / 1000000)
   log("request end in: " + deltaSeconds + "s" )
   var responseTime = deltaSeconds > HTTP_RESPONSE_THRESHOLD? 1 : deltaSeconds / HTTP_RESPONSE_THRESHOLD
   riemann.send(riemann.Event({
-    service: 'http-response-time',
+    service: 'http-response-time-normalized',
     metric: responseTime,
-    tags: ['nonblocking'],
+    tags: ['normalized'],
     host: process.env.RIEMANN_APPLICATION_NAME || 'UNKNOW',
     attributes: riemannAttributes,
-    state:   'ok'
+    state: deltaSeconds > HTTP_RESPONSE_THRESHOLD? 'error':'ok'
+  }));
+  riemann.send(riemann.Event({
+    service: 'http-response-time',
+    metric: deltaMilliSeconds,
+    tags: ['raw'],
+    host: process.env.RIEMANN_APPLICATION_NAME || 'UNKNOW',
+    attributes: riemannAttributes,
+    state: deltaSeconds > HTTP_RESPONSE_THRESHOLD? 'error':'ok'
+  }));
+  riemann.send(riemann.Event({
+    service: 'http-status-code-normalized',
+    metric: statusCode ? statusCode / 1000.0 : 0,
+    tags: ['normalized'],
+    host: process.env.RIEMANN_APPLICATION_NAME || 'UNKNOW',
+    attributes: riemannAttributes,
+    state: !statusCode || statusCode >= 500  ? 'error' : (statusCode < 300 ? 'ok' : 'warn')
   }));
   riemann.send(riemann.Event({
     service: 'http-status-code',
-    metric: statusCode ? statusCode / 1000.0 : 0,
-    tags: ['nonblocking'],
+    metric: statusCode,
+    tags: ['raw'],
     host: process.env.RIEMANN_APPLICATION_NAME || 'UNKNOW',
     attributes: riemannAttributes,
-    state:   'ok'
+    state: !statusCode || statusCode >= 500  ? 'error' : (statusCode < 300 ? 'ok' : 'warn')
   }));
 }
 
@@ -164,6 +181,22 @@ const statusLoop = (function startStatusLoop(){
         log("[status][ " + (index++) + " ]")
         log("connections count: " + count)
       }
+      riemann.send(riemann.Event({
+        service: 'http-connections-normalized',
+        metric: count > 100? 1 : count / 100,
+        tags: ['normalized'],
+        host: process.env.RIEMANN_APPLICATION_NAME || 'UNKNOW',
+        attributes: riemannAttributes,
+        state: count > 100? 'warn' : 'ok',
+      }));
+      riemann.send(riemann.Event({
+        service: 'http-connections',
+        metric: count,
+        tags: ['raw'],
+        host: process.env.RIEMANN_APPLICATION_NAME || 'UNKNOW',
+        attributes: riemannAttributes,
+        state: count > 100? 'warn' : 'ok',
+      }));
     })
   }
   var procesoID;
@@ -174,7 +207,7 @@ const statusLoop = (function startStatusLoop(){
       if(procesoID){
         clearInterval(procesoID);
       }
-      procesoID = setInterval(status, timeInMillis || 5000);
+      procesoID = setInterval(status, timeInMillis || 1000);
     },
     stop: function(){
       if(procesoID){
