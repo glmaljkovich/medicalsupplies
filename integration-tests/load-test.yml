@@ -28,7 +28,7 @@ scenarios:
       - post:
           url: "/user/signin"
           json:
-              email: "{{ $processEnvironment.EMAIL }}"
+              email: "{{ $processEnvironment.EMAIL + $randomNumber(1,10000) }}"
               password: "{{ $processEnvironment.PASSWORD }}"
           # The endpoint responds with JSON, which we parse and extract a field from
           # to use in the next request:
